@@ -54,3 +54,9 @@ HTTP 200。完整类型定义见 [`PrioritizeOutput`](../src/lib/contracts.ts)�
 应用响应带 `Cache-Control: no-store` 和 `X-Request-Id`，可用排查编号关联受控日志。部署平台防火墙可在请求进入应用前返回 429，该响应可能不是 JSON；前端会显示可操作的限流提示。
 
 接口返回建议而非执行结果。公开演示不是可依赖的生产 API，自行部署时应配置自己的额度与访问控制。
+
+## 邀请验证
+
+公共部署的生成接口需要有效会话 Cookie，且 POST 的 Origin 必须与目标网址同源。缺少、过期、篡改或已撤销的会话返回 401 `INVITE_REQUIRED`，在调用模型前拒绝；配置缺失返回 503 `INVITE_UNAVAILABLE`。
+
+`POST /api/invite` 接收 `{ "code": "<管理员提供的邀请码>" }`，成功返回 `{ "verified": true }` 并设置 24 小时 HttpOnly Cookie。响应禁止缓存，不返回邀请码或签名密钥。错误包括 401 `INVALID_INVITE`、403 `INVALID_ORIGIN`、413 `BODY_TOO_LARGE`、429 `INVITE_RATE_LIMITED`、503 `INVITE_UNAVAILABLE`。请求最多 1024 字节，限制包含无 Content-Length 的流式请求。

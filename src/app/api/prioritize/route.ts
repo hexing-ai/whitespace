@@ -1,3 +1,4 @@
+import { requireInvite } from '@/lib/invite';
 import { checkDemoInput, demoGate } from '@/lib/demo-guard';
 import { WhiteSpaceError, validateInput } from "@/lib/schema";
 import { prioritize, publicError } from "@/lib/qwen";
@@ -32,6 +33,7 @@ export async function POST(request: Request) {
   try {
     const input = validateInput(await readBody(request));
     checkDemoInput(input);
+    requireInvite(request);
     release = demoGate.enter();
     return Response.json(await prioritize(input, request.signal, requestId), { headers: { "Cache-Control": "no-store", "X-Request-Id": requestId } });
   } catch (error) {

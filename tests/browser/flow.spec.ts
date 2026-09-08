@@ -32,6 +32,8 @@ test("demo edits, row controls and real missing-key recovery", async ({ page }) 
   await expect(page.getByLabel("需求 13 名称", { exact: true })).toBeFocused();
   await page.getByRole("button", { name: "删除需求 13", exact: true }).click();
   await generate(page);
+  await page.getByRole("dialog").getByLabel("邀请码", { exact: true }).fill("browser-test-invite-only");
+  await page.getByRole("button", { name: "验证并继续生成" }).click();
   await expect(page.getByRole("main").getByRole("alert")).toHaveText("未配置 DASHSCOPE_API_KEY，请在 .env.local 填写阿里云百炼 Key。");
   await page.getByRole("button", { name: "返回修改需求" }).click(); await expand(page, 1);
   await expect(page.getByLabel("需求 1 名称", { exact: true })).toHaveValue("商家报名表");
@@ -234,4 +236,28 @@ test("unavailable preference storage does not block planning", async ({ page }) 
   await page.getByRole("button", { name: "返回引导" }).click();
   await page.getByRole("button", { name: "开始规划", exact: true }).first().click();
   await expect(page.getByLabel("成功标准", { exact: true })).toBeVisible();
+});
+
+test('invitation cancellation, errors, cookie expiry and input recovery use the real access gate', async ({ page, context }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await example(page); await requirements(page); await generate(page);
+  const dialog = page.getByRole('dialog');
+  await expect(dialog.getByLabel('邀请码', { exact: true })).toBeFocused();
+  await page.screenshot({path:'test-results/invite-mobile.png',fullPage:true});
+  await dialog.getByLabel('邀请码', { exact: true }).fill('incorrect-code');
+  await dialog.getByRole('button', { name: '验证并继续生成' }).click();
+  await expect(dialog.getByRole('alert')).toContainText('邀请码不正确');
+  await page.keyboard.press('Escape'); await expect(dialog).not.toBeVisible();
+  await page.getByRole('button', { name: '返回修改需求' }).click(); await expand(page, 1);
+  await expect(page.getByLabel('需求 1 名称', { exact: true })).toHaveValue('商家报名表');
+  await generate(page); await dialog.getByLabel('邀请码', { exact: true }).fill('browser-test-invite-only');
+  await dialog.getByRole('button', { name: '验证并继续生成' }).click();
+  await expect(page.getByRole('main').getByRole('alert')).toContainText('未配置 DASHSCOPE_API_KEY');
+  const cookie = (await context.cookies()).find(c => c.name === 'whitespace_invite');
+  expect(cookie?.httpOnly).toBe(true);expect(cookie?.sameSite).toBe('Strict');
+  expect(await page.evaluate(() => document.cookie)).not.toContain('whitespace_invite');
+  await context.clearCookies();
+  await page.getByRole('button', { name: '返回修改需求' }).click(); await generate(page);
+  await expect(dialog).toBeVisible();
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
 });

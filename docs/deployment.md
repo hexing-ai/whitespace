@@ -34,3 +34,17 @@ node node_modules/next/dist/bin/next start -H 0.0.0.0 -p 3000
 ```
 
 在宿主机环境或私有 `.env.local` 中配置百炼，使用 HTTPS 反向代理和对应限流能力。`WHITESPACE_DEMO_MODE=false` 为本地默认值；对公众提供服务时开启 Demo 保护或配置自己的访问和用量规则。
+
+## 邀请码访问
+
+公共 Demo（`WHITESPACE_DEMO_MODE=true`）强制验证邀请码，不能用 `WHITESPACE_INVITE_REQUIRED=false` 绕过。非 Demo 自托管可设置 `WHITESPACE_INVITE_REQUIRED=true` 开启；本地默认不启用。
+
+- 服务端 Sensitive 环境变量 `WHITESPACE_INVITE_CODES`：1～20 个用英文逗号分隔的高熵随机邀请码，每个 16～128 位，仅字母、数字、下划线和短横线。不要使用姓名或常见短密码。
+- `WHITESPACE_SESSION_SECRET`：至少 32 字符的独立随机签名密钥。两者均禁止使用 NEXT_PUBLIC 前缀、提交 Git 或写入日志。
+- 有效邀请码签发 24 小时的 HttpOnly、Secure、SameSite=Strict Cookie，不保存邀请码到浏览器存储。HTTP 本地开发 Cookie 不带 Secure；公网须使用 HTTPS。
+- 删除邀请码后重新部署，该码签发的会话在新部署上立即无效；轮换签名密钥可使所有会话失效。旧部署有独立配置快照，必须同时阻断旧部署的生成接口，不能只改新部署。
+- 验证接口 `POST /api/invite`：平台与生成接口共用一条规则，按 IP 和路径分别计数，每 60 秒最多 2 次；应用实例内每客户端 10 分钟最多 5 次、合计最多 60 次（成功也计数）。自托管未接可信代理时共用客户端桶。无数据库意味着这不是跨实例的精确计次或一次性邀请码。
+- 生成接口每次校验签名、期限、邀请码是否仍有效和同源请求；前端弹窗不是安全边界。取消、失败、过期均保留页面中的输入。
+- 本站 WAF 仅允许正式域名访问生成接口，旧部署独立网址被阻断，避免旧的匿名接口绕过邀请保护。
+
+手动线上回归使用专用、可撤销的邀请码，通过 GitHub Actions Secret `WHITESPACE_SMOKE_INVITE` 注入。工作流不保存 Cookie、邀请码或百炼 Key 到报告。

@@ -1,11 +1,11 @@
 # 架构与业务规则
 
-留白 WhiteSpace 是一个 Next.js App Router 应用。浏览器负责输入、展示与交互，Node.js Route Handler 负责百炼调用和确定性规则，无数据库、登录或独立后端服务。
+留白 WhiteSpace 是一个 Next.js App Router 应用。浏览器负责输入、展示与交互，Node.js Route Handler 负责百炼调用和确定性规则，无数据库、账号注册或独立后端服务；公共生成使用邀请码和服务端签名 Cookie 验证。
 
 ```mermaid
 flowchart TD
   A[规划条件与需求] --> B[POST /api/prioritize]
-  B --> C[输入校验与公开演示限额]
+  B --> C[输入校验、邀请码验证与演示限额]
   C --> D[百炼：通义千问结构化分析]
   D --> E[结构与原文索引校验]
   E --> F[目标对应、范围与依赖检查]

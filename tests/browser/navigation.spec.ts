@@ -79,7 +79,7 @@ for (const exit of ["产品首页", "开始规划"]) test(`${exit} remains avail
 test('public demo notice preserves the desktop directory and full-width working area', async ({ page }) => {
   await page.setViewportSize({width:1440,height:1000});
   await page.goto('/');await page.locator('.home-plan-entry').click();
-  await expect(page.getByText(/公共演示使用共享额度/)).toBeVisible();
+  await expect(page.getByText(/AI 生成需邀请码/)).toBeVisible();
   const directory=await page.locator('.directory').boundingBox(),stage=await page.locator('.stage').boundingBox();
   expect(directory).not.toBeNull();expect(stage).not.toBeNull();
   expect(stage!.x).toBeGreaterThan(directory!.x+directory!.width);

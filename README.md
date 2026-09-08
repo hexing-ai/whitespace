@@ -5,7 +5,7 @@
 [![CI](https://github.com/hexing-ai/whitespace/actions/workflows/ci.yml/badge.svg)](https://github.com/hexing-ai/whitespace/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-1d3045.svg)](LICENSE)
 
-**[在线体验 →](https://whitespace-junz11055-8124.vercel.app)** · 无需登录，点击“用示例体验”即可开始。公共 Demo 使用真实百炼调用，有共享额度与频率限制；请勿输入业务机密。
+**[在线体验 →](https://whitespace-junz11055-8124.vercel.app)** · 页面可自由浏览，点击“用示例体验”填写需求；**AI 生成需要邀请码**，请向网站维护者获取。公共 Demo 使用真实百炼调用，有共享额度与频率限制；请勿输入业务机密。
 
 规划会上，难的往往不是列出想做什么，而是说清楚：**这期必须做什么，为什么，以及什么先不承诺。**
 
@@ -79,7 +79,7 @@ npm run dev
 
 ## 技术与验证
 
-Next.js App Router · React · TypeScript · Tailwind CSS · 阿里云百炼通义千问。单一 Node.js 应用，无数据库、登录或独立服务。
+Next.js App Router · React · TypeScript · Tailwind CSS · 阿里云百炼通义千问。单一 Node.js 应用，无数据库、账号注册或独立服务；公共生成通过邀请码验证。
 
 ```bash
 npm run typecheck

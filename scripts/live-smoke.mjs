@@ -20,7 +20,7 @@ if (!remoteURL && !process.env.DASHSCOPE_API_KEY?.trim()) {
   process.exitCode = 2;
 } else {
   const port = 3101, logs = [], reports = [];
-  const hashFiles=['src/lib/demo-guard.ts','src/app/api/prioritize/route.ts','src/features/planner/action-arrow.tsx','public/favicon.svg','src/features/home/frame-bank.ts','src/features/home/frame-worker.ts','src/features/home/frame-types.ts','package-lock.json','src/features/home/CinematicHome.tsx','src/features/home/use-video-scroll.ts','src/features/home/config.ts','src/features/home/home.css','src/lib/prompt.ts','src/lib/goals.ts','tests/negative-goals/cases.v1.json','src/lib/planning.ts','src/lib/dependency-policy.ts','src/lib/scope-policy.ts','src/lib/qwen.ts','src/lib/demo.ts','scripts/live-smoke.mjs','tests/evaluation/cases.v1.json','src/lib/contracts.ts','src/lib/input.ts','src/app/page.tsx','src/app/globals.css','src/features/planner/api.ts','src/features/planner/form.ts','src/features/planner/planner.tsx','src/features/planner/plan-results.tsx','src/features/hero-ink/HeroInkBackground.tsx','src/features/hero-ink/fluid.ts','src/features/hero-ink/shaders.ts','src/features/hero-ink/config.ts','tests/exclusions/cases.v1.json','tests/exclusions/evaluate.mjs'];
+  const hashFiles=['src/lib/invite.ts','src/app/api/invite/route.ts','src/features/planner/invite-dialog.tsx','src/lib/demo-guard.ts','src/app/api/prioritize/route.ts','src/features/planner/action-arrow.tsx','public/favicon.svg','src/features/home/frame-bank.ts','src/features/home/frame-worker.ts','src/features/home/frame-types.ts','package-lock.json','src/features/home/CinematicHome.tsx','src/features/home/use-video-scroll.ts','src/features/home/config.ts','src/features/home/home.css','src/lib/prompt.ts','src/lib/goals.ts','tests/negative-goals/cases.v1.json','src/lib/planning.ts','src/lib/dependency-policy.ts','src/lib/scope-policy.ts','src/lib/qwen.ts','src/lib/demo.ts','scripts/live-smoke.mjs','tests/evaluation/cases.v1.json','src/lib/contracts.ts','src/lib/input.ts','src/app/page.tsx','src/app/globals.css','src/features/planner/api.ts','src/features/planner/form.ts','src/features/planner/planner.tsx','src/features/planner/plan-results.tsx','src/features/hero-ink/HeroInkBackground.tsx','src/features/hero-ink/fluid.ts','src/features/hero-ink/shaders.ts','src/features/hero-ink/config.ts','tests/exclusions/cases.v1.json','tests/exclusions/evaluate.mjs'];
   const sourceHashes=Object.fromEntries(await Promise.all(hashFiles.map(async p=>[p,createHash('sha256').update(await readFile(p)).digest('hex')])));
   const directory = `test-results/live-${negative?'negative':scope?'scope':exclusions?'exclusion':'dependency'}-${new Date().toISOString().replace(/[:.]/g,'-')}`;
   await mkdir(directory,{recursive:true});
@@ -36,6 +36,10 @@ if (!remoteURL && !process.env.DASHSCOPE_API_KEY?.trim()) {
     if(!ready)throw new Error('本地服务未能启动。');
     browser=await chromium.launch({channel:process.env.PLAYWRIGHT_CHANNEL||'chrome'});
     const context=await browser.newContext({reducedMotion:'reduce',permissions:['clipboard-read','clipboard-write']});
+    if (process.env.WHITESPACE_SMOKE_INVITE) {
+      const verification = await context.request.post(`${baseURL}/api/invite`, { headers: { origin: baseURL }, data: { code: process.env.WHITESPACE_SMOKE_INVITE } });
+      if (!verification.ok()) throw new Error(`Invitation verification failed (${verification.status()}); no model call made.`);
+    }
     const page=await context.newPage();
     const browserErrors=[];let apiRequests=0;
     page.on('pageerror',error=>browserErrors.push(error.message));
