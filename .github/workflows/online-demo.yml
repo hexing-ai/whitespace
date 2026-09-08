@@ -5,7 +5,7 @@ on:
       mode:
         description: 'closed checks the safety gate; live makes one paid generation'
         type: choice
-        options: [closed, live]
+        options: [closed, protected, home, live]
         default: closed
 permissions:
   contents: read
@@ -25,12 +25,18 @@ jobs:
       - run: npm ci
       - if: inputs.mode == 'closed'
         run: node scripts/check-online-gate.mjs
-      - if: inputs.mode == 'live'
+      - if: inputs.mode == 'live' || inputs.mode == 'home'
         run: npx playwright install --with-deps chromium
       - if: inputs.mode == 'live'
         env:
           WHITESPACE_SMOKE_INVITE: ${{ secrets.WHITESPACE_SMOKE_INVITE }}
         run: npm run test:live -- --url=https://whitespace-junz11055-8124.vercel.app --case=demo-5-10 --workspace-preview
+      - if: inputs.mode == 'protected'
+        env:
+          WHITESPACE_SMOKE_INVITE: ${{ secrets.WHITESPACE_SMOKE_INVITE }}
+        run: node scripts/check-invite-gate.mjs
+      - if: inputs.mode == 'home'
+        run: node scripts/check-home-performance.mjs --url=https://whitespace-junz11055-8124.vercel.app
       - uses: actions/upload-artifact@v4
         if: always()
         with:

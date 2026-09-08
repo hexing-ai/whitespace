@@ -1,6 +1,6 @@
 import { createFile, DataStream, type Sample, type Track } from "mp4box";
-import { homeConfig } from "./config";
-import type { CompressedFrame, FrameBankMessage, FrameWorkerCommand } from "./frame-types";
+import { homeConfig } from "../../src/features/home/config";
+import type { CompressedFrame, FrameBankMessage, FrameWorkerCommand } from "../../src/features/home/frame-types";
 
 const scope = self as unknown as { onmessage: (event: MessageEvent<FrameWorkerCommand>) => void; postMessage: (message: FrameBankMessage) => void };
 let paused = false;
@@ -36,8 +36,10 @@ function demux(buffer: ArrayBuffer) {
 async function decode(input: Awaited<ReturnType<typeof demux>>, acceleration: HardwareAcceleration) {
   const config: VideoDecoderConfig = { codec: input.track.codec, codedWidth: input.track.video.width, codedHeight: input.track.video.height, description: input.description, hardwareAcceleration: acceleration };
   if (!(await VideoDecoder.isConfigSupported(config)).supported) throw new Error("Unsupported decoder");
+  const width = Math.min(1280, config.codedWidth!);
+  const height = Math.round(width * config.codedHeight! / config.codedWidth!);
   const lanes = Array.from({ length: 4 }, () => {
-    const surface = new OffscreenCanvas(config.codedWidth!, config.codedHeight!);
+    const surface = new OffscreenCanvas(width, height);
     const context = surface.getContext("2d", { alpha: false });
     if (!context) throw new Error("Missing canvas context");
     return { surface, context, encoding: Promise.resolve() };
@@ -55,7 +57,7 @@ async function decode(input: Awaited<ReturnType<typeof demux>>, acceleration: Ha
         await waitVisible();
         if (failure) return;
         const ts = frame.timestamp;
-        lane.context.drawImage(frame, 0, 0);
+        lane.context.drawImage(frame, 0, 0, width, height);
         frame.close(); live.delete(frame);
         const blob = await lane.surface.convertToBlob({ type: "image/webp", quality: homeConfig.webpQuality });
         frames.push({ ts, blob }); completed++;
@@ -78,7 +80,7 @@ async function decode(input: Awaited<ReturnType<typeof demux>>, acceleration: Ha
     frames.sort((a, b) => a.ts - b.ts);
     const start = frames[0].ts;
     frames.forEach(frame => { frame.ts -= start; });
-    return { frames, peakFrames };
+    return { frames, peakFrames, width, height };
   } finally {
     if (decoder.state !== "closed") decoder.close();
     await Promise.all(lanes.map(lane => lane.encoding));
@@ -99,7 +101,7 @@ async function build(url: string) {
     let result: Awaited<ReturnType<typeof decode>>, acceleration = "prefer-hardware";
     try { result = await decode(input, "prefer-hardware"); }
     catch (error) { scope.postMessage({ type: "retry", reason: error instanceof Error ? error.message : "Hardware decoder failed" }); acceleration = "prefer-software"; result = await decode(input, "prefer-software"); }
-    scope.postMessage({ type: "ready", ...result, duration: input.track.duration / input.track.timescale, width: input.track.video.width, height: input.track.video.height, acceleration, buildMs: performance.now() - started, downloadMs, decodeMs: performance.now() - decodeStarted, compressedBytes: result.frames.reduce((total, frame) => total + frame.blob.size, 0) });
+    scope.postMessage({ type: "ready", ...result, duration: input.track.duration / input.track.timescale,  acceleration, buildMs: performance.now() - started, downloadMs, decodeMs: performance.now() - decodeStarted, compressedBytes: result.frames.reduce((total, frame) => total + frame.blob.size, 0) });
   } catch (error) { scope.postMessage({ type: "error", reason: error instanceof Error ? error.message : "Frame bank failed" }); }
 }
 

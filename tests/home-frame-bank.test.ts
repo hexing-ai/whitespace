@@ -54,7 +54,7 @@ it("evicts old bitmaps, retains no more than 24 and closes every allocation on d
   await vi.waitFor(() => expect(closed).toBe(allocated));
 });
 
-it("reports bitmap decoding failure so the caller can restore video seeking", async () => {
+it("reports bitmap decoding failure so the caller can restore the readable static page", async () => {
   const { bank, fail } = setup();
   vi.stubGlobal("createImageBitmap", () => Promise.reject(new Error("decode failure")));
   bank.draw(0);
@@ -73,4 +73,14 @@ it("keeps moving with available frames while a fast-changing exact target is sti
   expect(Number(canvas.dataset.time)).toBeLessThanOrEqual(.4);
   bank.dispose();
   pending.splice(0).forEach(resolve => resolve({ close: vi.fn() } as unknown as ImageBitmap));
+});
+
+it('does not download the full asset set, aborts outstanding requests when hidden or disposed',async()=>{
+ const signals:AbortSignal[]=[];
+ vi.stubGlobal('fetch',vi.fn((_url,init)=>new Promise((_resolve,reject)=>{signals.push(init.signal);init.signal.addEventListener('abort',()=>reject(new DOMException('Aborted','AbortError')));} )));
+ const canvas={width:1280,height:720,dataset:{},getContext:()=>({drawImage:vi.fn()})} as unknown as HTMLCanvasElement;
+ const wake=vi.fn(),fail=vi.fn();const bank=new FrameBank(canvas,Array.from({length:241},(_,i)=>({ts:i*40000,url:`/media/frames/example/${i}.webp`})),wake,fail);
+ bank.draw(0);expect(signals).toHaveLength(4);bank.pause(true);expect(signals.every(s=>s.aborted)).toBe(true);
+ await new Promise(r=>setTimeout(r,0));expect(fail).not.toHaveBeenCalled();expect(wake).not.toHaveBeenCalled();
+ bank.pause(false);bank.draw(0);expect(signals).toHaveLength(8);bank.dispose();expect(signals.every(s=>s.aborted)).toBe(true);
 });

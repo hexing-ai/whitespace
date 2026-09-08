@@ -8,14 +8,13 @@ import "./home.css";
 
 export default function CinematicHome({ brand, help, enter }: { brand: ReactNode; help: () => void; enter: (example: boolean) => void }) {
   const root = useRef<HTMLDivElement>(null);
-  const video = useRef<HTMLVideoElement>(null);
   const canvas = useRef<HTMLCanvasElement>(null);
   const focusTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const menu = useRef<HTMLDialogElement>(null);
   const [menuOpen, setMenuOpen] = useState(false);
   const [menuActive, setMenuActive] = useState(false);
   const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
-  useVideoScroll(root, video, canvas);
+  useVideoScroll(root, canvas);
   useEffect(() => () => { if (focusTimer.current) clearTimeout(focusTimer.current); if (closeTimer.current) clearTimeout(closeTimer.current); }, []);
   useEffect(() => {
     if (!menuActive) return;
@@ -44,7 +43,7 @@ export default function CinematicHome({ brand, help, enter }: { brand: ReactNode
     focusTimer.current = setTimeout(() => section.querySelector<HTMLElement>("h1, h2")?.focus({ preventScroll: true }), reduced ? 0 : 1000);
   }
 
-  return <div ref={root} className="cinematic-home" data-mode="static" data-video-state="static" data-renderer="video">
+  return <div ref={root} className="cinematic-home" data-mode="static" data-video-state="static" data-renderer="poster">
     <header className="home-navbar">
       <button className="home-hamburger" aria-label="打开首页菜单" aria-haspopup="dialog" aria-expanded={menuOpen} aria-controls="home-menu" onClick={openMenu}><span /><span /><span /></button>
       <nav className="home-nav-links" aria-label="产品导航">
@@ -58,7 +57,6 @@ export default function CinematicHome({ brand, help, enter }: { brand: ReactNode
       </div>
     </header>
     <div className="home-scene">
-      <video ref={video} className="home-video" muted playsInline preload="auto" aria-hidden="true" tabIndex={-1} />
       <canvas ref={canvas} className="home-canvas" width={1920} height={1080} aria-hidden="true" />
       <section className="home-chapter home-brand" aria-label="认识留白" data-visible="true">
         <div className="home-brand-content">{brand}</div>

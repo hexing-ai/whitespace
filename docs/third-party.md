@@ -14,6 +14,6 @@
 
 ## 首页媒体
 
-首页视频通过外部 CDN 读取，地址集中在 `src/features/home/config.ts`；本仓库不包含 MP4 原文件。`public/media/whitespace-mountains.webp` 是首页封面，`docs/images/home.png` 是含背景的页面截图。
+原视频来源地址集中在 `src/features/home/config.ts`；本仓库不包含 MP4 原文件。首页实际加载 `public/media/frames/` 中发布前生成的 241 张 WebP 帧，不再由访客浏览器下载和转换视频；这些派生图片沿用源媒体的许可边界。`public/media/whitespace-mountains.webp` 是首页封面，`docs/images/home.png` 是含背景的页面截图。
 
 这些媒体不纳入项目自有代码的 MIT 许可。现有源链接未附独立再分发许可证，媒体的完整授权范围尚待补充；二次分发或商用发布时应替换为自有或已获授权的媒体。工作台功能和业务规则不依赖具体山景素材。

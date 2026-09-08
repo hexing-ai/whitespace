@@ -42,19 +42,20 @@ flowchart TD
 
 单一路由 `/` 内切换产品首页和五个工作视图：规划条件、需求清单、范围结果、原文依据、会议结论。目录用于切换当前视图，不将多个步骤挤在同一屏。
 
-状态包括初始化、空输入、分析中、待确认、可达、不可达、目标冲突、请求失败与重试。刷新清空规划内容，仅“跳过引导”偏好写入 localStorage。
+状态包括初始化、空输入、邀请验证及失效恢复、分析中、待确认、可达、不可达、目标冲突、请求失败与重试。刷新清空规划内容，仅“跳过引导”偏好写入 localStorage。
 
 ## 代码地图
 
 | 位置 | 职责 |
 | --- | --- |
-| `src/features/home/` | 首页、滚动视频帧、移动端静态回退 |
+| `src/features/home/` | 首页、按需加载预处理帧、移动端静态回退 |
 | `src/features/planner/` | 五视图、表单状态、API 客户端、结果与复制 |
 | `src/app/api/prioritize/route.ts` | HTTP 边界与请求生命周期 |
 | `src/lib/qwen.ts`、`prompt.ts` | 百炼配置、结构化分析与有限重试 |
 | `src/lib/input.ts`、`contracts.ts` | 输入校验和公开数据契约 |
 | `src/lib/goals.ts`、`dependency-policy.ts`、`scope-policy.ts`、`planning.ts` | 目标、依赖、范围与承诺规则 |
+| `src/lib/invite.ts`、`src/app/api/invite/route.ts` | 邀请码验证、签名会话与防猜测 |
 | `src/lib/demo-guard.ts` | 公共 Demo 的输入与实例内调用限制 |
 | `tests/` | 独立场景、规则测试、API 与浏览器测试 |
 
-首页的帧解码、Canvas 和视频会在进入工作台后清理。保留的水墨组件属于可复用组件，当前首页不加载它。
+首页通过版本化静态图片按需加载：最多 4 个并行下载/解码，最多 24 个 ImageBitmap。进入工作台后中止请求并释放图像资源；隐藏时暂停，静止且附近帧准备完成后不空转。整段视频的解码和转图只在发布前执行，详见[首页性能](home-performance.md)。保留的水墨组件属于可复用组件，当前首页不加载它。

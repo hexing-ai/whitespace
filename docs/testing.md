@@ -14,7 +14,7 @@ PLAYWRIGHT_CHANNEL=chromium npm run test:e2e
 
 Linux 可能需要 `npx playwright install --with-deps chromium`；本机装有 Google Chrome 时，直接 `npm run test:e2e` 默认使用 Chrome。PowerShell 可先执行 `$env:PLAYWRIGHT_CHANNEL="chromium"`。
 
-浏览器测试会启动自己的开发服务器，先停止占用 3100 的服务。测试使用固定 API 响应检查状态和交互，不会产生百炼费用。首页动态用例需要原始视频字节：本机默认访问 CDN，也可用 WHITESPACE_VIDEO_FIXTURE 指向经过哈希核对的本地视频。CI 先下载并校验视频，再作为固定输入交给浏览器，页面回归期间不依赖 CDN 时序。
+浏览器测试会启动自己的开发服务器，先停止占用 3100 的服务。测试使用固定 API 响应检查状态和交互，不会产生百炼费用。首页动态用例使用仓库内的真实预处理帧，不再下载外部视频；测试覆盖完整时间轴、按需加载、失败回退和资源清理。
 
 CI 在推送和 Pull Request 时运行上述工程、规则和浏览器检查，不配置百炼 Key。
 
@@ -51,7 +51,7 @@ npm run test:scope
 
 ## 在线版本
 
-GitHub Actions 的 **Online Demo** 工作流支持手动运行：`closed` 检查生成关闭开关与平台限流，不产生模型调用；`live` 使用真实 Chromium 完成一次内置示例生成，会消耗部署方的模型额度。
+GitHub Actions 的 **Online Demo** 工作流支持手动运行：`closed` 检查生成关闭开关与平台限流，不产生模型调用；`protected` 检查匿名拒绝、邀请码、防猜测与旧部署阻断，`home` 测量真实线上首页性能；`live` 使用真实 Chromium 完成一次内置示例生成，会消耗部署方的模型额度。
 
 也可在本机 Google Chrome 中执行：
 
