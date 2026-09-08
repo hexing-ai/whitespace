@@ -14,7 +14,7 @@ PLAYWRIGHT_CHANNEL=chromium npm run test:e2e
 
 Linux 可能需要 `npx playwright install --with-deps chromium`；本机装有 Google Chrome 时，直接 `npm run test:e2e` 默认使用 Chrome。PowerShell 可先执行 `$env:PLAYWRIGHT_CHANNEL="chromium"`。
 
-浏览器测试会启动自己的开发服务器，先停止占用 3100 的服务。测试使用固定 API 响应检查状态和交互，不会产生百炼费用。首页用例验证自然文档流、快速往返滚动、原画面随滚动推进、媒体阻塞不影响正文、触屏／减少动态效果、隐藏暂停与退出清理。性能脚本使用真实浏览器滚轮输入，记录全过程帧间隔和长任务。
+浏览器测试会启动自己的开发服务器，先停止占用 3100 的服务。测试使用固定 API 响应检查状态和交互，不会产生百炼费用。首页用例验证三幕舞台、完整帧时间轴、入口可用、弱网／缺帧降级、触屏／减少动态效果与退出清理。性能脚本在真实浏览器中推进滚动位置，测量背景实际绘制间隔与长任务；人工浏览器预览另行确认三幕视觉。
 
 CI 在推送和 Pull Request 时运行上述工程、规则和浏览器检查，不配置百炼 Key。
 

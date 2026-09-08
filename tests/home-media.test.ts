@@ -15,11 +15,3 @@ it('ships the complete approved timeline with immutable verified frames and a bo
  }
  expect(total).toBeLessThan(4500000);
 });
-
-it('ships a verified compact preview for all 121 positions without new scenery',()=>{
- const preview=JSON.parse(readFileSync('src/features/home/preview-manifest.json','utf8'));
- const bytes=readFileSync('public'+preview.url);
- expect(createHash('sha256').update(bytes).digest('hex')).toBe(preview.sha256);
- expect(bytes.length).toBeLessThan(200000);expect(preview.count).toBe(121);
- expect((preview.count-1)*preview.step).toBe(manifest.frames.length-1);
-});

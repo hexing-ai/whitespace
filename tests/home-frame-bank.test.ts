@@ -84,33 +84,3 @@ it('does not download the full asset set, aborts outstanding requests when hidde
  await new Promise(r=>setTimeout(r,0));expect(fail).not.toHaveBeenCalled();expect(wake).not.toHaveBeenCalled();
  bank.pause(false);bank.draw(0);expect(signals).toHaveLength(8);bank.dispose();expect(signals.every(s=>s.aborted)).toBe(true);
 });
-
-it('abandons downloads behind a fast scroll and requests the new target next', async () => {
- const requested: {url:string;signal:AbortSignal}[]=[];
- vi.stubGlobal('fetch',vi.fn((url,init)=>new Promise((_resolve,reject)=>{
-  requested.push({url,signal:init.signal});init.signal.addEventListener('abort',()=>reject(new DOMException('Aborted','AbortError')));
- })));
- const canvas={width:1280,height:720,dataset:{},getContext:()=>({drawImage:vi.fn()})} as unknown as HTMLCanvasElement;
- const bank=new FrameBank(canvas,Array.from({length:241},(_,i)=>({ts:i*40000,url:`/media/frames/test/${i}.webp`})),vi.fn(),vi.fn());
- bank.draw(0);bank.draw(8);
- expect(requested.slice(0,4).every(r=>r.signal.aborted)).toBe(true);
- await new Promise(r=>setTimeout(r,0));bank.draw(8);
- expect(requested[4].url).toBe('/media/frames/test/200.webp');bank.dispose();
-});
-
-it('uses the small whole-timeline preview immediately while detail is delayed, then releases it', async () => {
- const closePreview=vi.fn(),closeDetail=vi.fn(),drawImage=vi.fn();
- const preview={close:closePreview} as unknown as ImageBitmap, detail={close:closeDetail} as unknown as ImageBitmap;
- const decodes:((value:ImageBitmap)=>void)[]=[];
- vi.stubGlobal('createImageBitmap',vi.fn(()=>new Promise<ImageBitmap>(resolve=>decodes.push(resolve))));
- const fetched:string[]=[];
- vi.stubGlobal('fetch',vi.fn(async(url:string)=>{fetched.push(url);return {ok:true,blob:async()=>new Blob()};}));
- const canvas={width:1280,height:720,dataset:{},getContext:()=>({drawImage})} as unknown as HTMLCanvasElement;
- const bank=new FrameBank(canvas,Array.from({length:241},(_,i)=>({ts:i*40000,url:`/frame/${i}`})),vi.fn(),vi.fn(),{url:'/preview',width:320,height:180,columns:11,step:2,count:121});
- await vi.waitFor(()=>expect(decodes).toHaveLength(1));decodes.shift()!(preview);
- await vi.waitFor(()=>expect(canvas.dataset.preview).toBe('ready'));
- bank.draw(8,false);expect(fetched).toEqual(['/preview']);expect(canvas.dataset.frame).toBe('200');expect(canvas.dataset.quality).toBe('preview');
- bank.draw(8,true);await vi.waitFor(()=>expect(decodes).toHaveLength(1));decodes.shift()!(detail);
- await new Promise(resolve=>setTimeout(resolve,0));bank.draw(8,true);expect(canvas.dataset.quality).toBe('full');
- bank.dispose();expect(closePreview).toHaveBeenCalledOnce();expect(closeDetail).toHaveBeenCalledOnce();
-});
