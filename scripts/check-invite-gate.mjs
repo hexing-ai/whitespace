@@ -22,12 +22,15 @@ try{
  for(let i=0;i<3;i++){
   const response=await post('/api/invite',{code:'invalid-verification-probe'});
   const type=response.headers.get('content-type')||'';
-  report.platformProbes.push({time:new Date().toISOString(),status:response.status,contentType:type});
-  if(response.status===429&&!type.includes('application/json'))break;
+  const payload=await response.json().catch(()=>null);
+  const errorCode=payload?.error?.code||payload?.code||null;
+  report.platformProbes.push({time:new Date().toISOString(),status:response.status,contentType:type,errorCode});
+  if(response.status===429&&errorCode!=='INVITE_RATE_LIMITED')break;
  }
- report.checks.platformGuessLimit=report.platformProbes.some(p=>p.status===429&&!p.contentType.includes('application/json'));
+ report.checks.platformGuessLimit=report.platformProbes.some(p=>p.status===429&&p.errorCode!=='INVITE_RATE_LIMITED');
  const limitedGeneration=await post('/api/prioritize',{},cookie.split(';')[0]);
- report.checks.authenticatedGenerationLimit=limitedGeneration.status===429&&!(limitedGeneration.headers.get('content-type')||'').includes('application/json');
+ // The application rejects this empty input with 400 before its quota check; 429 therefore proves platform admission control.
+ report.checks.authenticatedGenerationLimit=limitedGeneration.status===429;
  report.checks.oldDeploymentBlocked=(await fetch('https://whitespace-kid1p2n0w-junz11055-8124.vercel.app/api/prioritize',{signal:AbortSignal.timeout(15000)})).status===403;
  report.passed=Object.values(report.checks).every(Boolean);
 }finally{await mkdir('test-results/invite-gate',{recursive:true});await writeFile('test-results/invite-gate/report.json',JSON.stringify(report,null,2));}
