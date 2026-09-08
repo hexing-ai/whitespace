@@ -8,14 +8,15 @@ const report={time:new Date().toISOString(),passed:false,checks:{},platformProbe
 try{
  const old='https://whitespace-kid1p2n0w-junz11055-8124.vercel.app';
  report.checks.oldPostBlocked=(await fetch(old+'/api/prioritize',{method:'POST',headers:{origin:old,'content-type':'application/json'},body:'{}',signal:AbortSignal.timeout(15000)})).status===403;
- // The IP/path bucket spans hostnames; start the current-site checks in a fresh minute.
- await delay(61000);
  report.checks.home=(await fetch(origin)).status===200;
  const anonymous=await post('/api/prioritize',demoInput);report.checks.anonymousRejected=anonymous.status===401&&(await anonymous.json()).error.code==='INVITE_REQUIRED';
+ report.checks.tamperedRejected=(await post('/api/prioritize',demoInput,'__Host-whitespace_invite=invalid-session')).status===401;
+ // Start invitation tests with a fresh shared per-IP bucket.
+ await delay(61000);
  report.checks.wrongCodeRejected=(await post('/api/invite',{code:'invalid-verification-probe'})).status===401;
  const valid=await post('/api/invite',{code:process.env.WHITESPACE_SMOKE_INVITE});report.checks.validInvitation=valid.status===200;
  const cookie=valid.headers.get('set-cookie')||'';report.checks.secureCookie=/HttpOnly/.test(cookie)&&/Secure/.test(cookie)&&/SameSite=Strict/.test(cookie);
- report.checks.tamperedRejected=(await post('/api/prioritize',demoInput,'__Host-whitespace_invite=invalid-session')).status===401;
+
  // A fixed window may roll over between verification and the first probe.
  // At most three additional guesses crosses that boundary without reaching the app's sixth-attempt limit.
  for(let i=0;i<3;i++){
