@@ -5,6 +5,8 @@
 [![CI](https://github.com/hexing-ai/whitespace/actions/workflows/ci.yml/badge.svg)](https://github.com/hexing-ai/whitespace/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-1d3045.svg)](LICENSE)
 
+**[在线体验 →](https://whitespace-junz11055-8124.vercel.app)** · 无需登录，点击“用示例体验”即可开始。公共 Demo 使用真实百炼调用，有共享额度与频率限制；请勿输入业务机密。
+
 规划会上，难的往往不是列出想做什么，而是说清楚：**这期必须做什么，为什么，以及什么先不承诺。**
 
 留白把成功标准、需求依赖和团队产能放在一起分析，生成可核对的 MoSCoW 范围建议，并把取舍整理成一份可复制的会议结论。
