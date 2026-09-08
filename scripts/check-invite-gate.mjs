@@ -26,6 +26,8 @@ try{
   if(response.status===429&&!type.includes('application/json'))break;
  }
  report.checks.platformGuessLimit=report.platformProbes.some(p=>p.status===429&&!p.contentType.includes('application/json'));
+ const limitedGeneration=await post('/api/prioritize',{},cookie.split(';')[0]);
+ report.checks.authenticatedGenerationLimit=limitedGeneration.status===429&&!(limitedGeneration.headers.get('content-type')||'').includes('application/json');
  report.checks.oldDeploymentBlocked=(await fetch('https://whitespace-kid1p2n0w-junz11055-8124.vercel.app/api/prioritize',{signal:AbortSignal.timeout(15000)})).status===403;
  report.passed=Object.values(report.checks).every(Boolean);
 }finally{await mkdir('test-results/invite-gate',{recursive:true});await writeFile('test-results/invite-gate/report.json',JSON.stringify(report,null,2));}
