@@ -21,13 +21,27 @@
 
 [在线体验](https://whitespace-junz11055-8124.vercel.app) · [性能与复测方法](home-performance.md) · [第三方媒体许可边界](third-party.md)
 
+导航与底部规划入口不再继承全局颜色渐变，背景切换瞬间的文字颜色由线上自动检查验证。
+
 ## 发布验证记录
 
-- 运行时代码：`d8ddb9c6dd4af14720a695914bb7d2a3b62263f2`。
-- Vercel生产部署：`dpl_GT47XKH1QMo93US97v8S4Pba6QZd`，两正式域名均已指向此版本。
-- [独立CI：291单元＋37浏览器](https://github.com/hexing-ai/whitespace/actions/runs/34241641963)
-- [线上首页性能与四档截图](https://github.com/hexing-ai/whitespace/actions/runs/34241948730)
-- [邀请码、匿名拒绝与限流](https://github.com/hexing-ai/whitespace/actions/runs/34241960070)
+- 运行时代码：`b2ab09dc6e990c305b543a415bc86c2cd5de5200`。
+- Vercel生产部署：`dpl_AGB9Y7Rw7z6WjpPSnbBtKz3XuMTC`，两正式域名均已指向此版本。
+- [独立CI：291单元＋37浏览器](https://github.com/hexing-ai/whitespace/actions/runs/34243407204)
+- [线上首页性能与四档截图](https://github.com/hexing-ai/whitespace/actions/runs/34243491839)
+- [邀请码、匿名拒绝与限流](https://github.com/hexing-ai/whitespace/actions/runs/34243502858)
 
 ![原山景首页](images/home.png)
 ![自然滚动后的海面行动区](images/home-action.png)
+
+## 最终线上实测
+
+GitHub Actions的Linux Chromium单次样本；普通10Mbps/20ms，受限1.6Mbps/150ms与4倍CPU节流。
+
+| 场景 | 首背景帧 | 完整预览 | 跳末尾响应 | 回首屏响应 | 静止RAF |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| cold | 1195ms | 1222ms | 28ms | 12ms | 0 |
+| warm | 992ms | 994ms | 23ms | 32ms | 0 |
+| constrained | 2785ms | 3583ms | 80ms | 26ms | 0 |
+
+三档均通过；正文RAF间隔P95≤16.8ms，无页面错误、CLS为0。背景绘制间隔随测试滚轮输入节奏单独记录，不等于视频播放帧率。匿名拒绝、篡改会话拒绝、错误邀请码拒绝、有效邀请码、安全Cookie、防猜测限流、生成限流和旧部署阻断均通过；未发起付费模型生成。
