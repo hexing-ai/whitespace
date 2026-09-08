@@ -48,7 +48,7 @@ flowchart TD
 
 | 位置 | 职责 |
 | --- | --- |
-| `src/features/home/` | 自然滚动首页、原创 SVG 山景、轻量 CSS 雾层 |
+| `src/features/home/` | 自然滚动首页、原山景逐帧背景、资源调度 |
 | `src/features/planner/` | 五视图、表单状态、API 客户端、结果与复制 |
 | `src/app/api/prioritize/route.ts` | HTTP 边界与请求生命周期 |
 | `src/lib/qwen.ts`、`prompt.ts` | 百炼配置、结构化分析与有限重试 |
@@ -58,4 +58,4 @@ flowchart TD
 | `src/lib/demo-guard.ts` | 公共 Demo 的输入与实例内调用限制 |
 | `tests/` | 独立场景、规则测试、API 与浏览器测试 |
 
-首页使用内联 SVG 山形与两层 CSS 雾，不请求视频、图片帧或外部字体，也不运行 Canvas、Worker 或滚动 RAF。正文为自然文档流，导航定位真实段落；触屏与减少动态效果使用静态背景，离屏和页面隐藏暂停雾层。进入工作台卸载首页并清理观察器与监听。详见[首页性能](home-performance.md)。保留的水墨组件当前首页不加载。
+首页正文保留自然文档流，装饰Canvas按页面实际滚动位置选择原山景帧。背景不修改正文布局、透明度或滚动位置。先加载175KB原画面预览，滚动立即取帧，停下120ms后补清晰帧。最多4并发、预览加12个清晰位图；快滚放弃离开当前位置的未完成请求，优先新目标。不可用或减少动态效果显示原山景封面，进入工作台释放资源；不运行视频转换Worker。详见[首页性能](home-performance.md)。

@@ -2,11 +2,13 @@
 
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import { ArrowRight, ArrowDown, Info, X } from "lucide-react";
-import { MountainAtmosphere } from "./MountainAtmosphere";
+import { useScrollLandscape } from "./use-scroll-landscape";
 import "./home.css";
 
 export default function CinematicHome({ brand, help, enter }: { brand: ReactNode; help: () => void; enter: (example: boolean) => void }) {
   const root = useRef<HTMLDivElement>(null);
+  const canvas = useRef<HTMLCanvasElement>(null);
+  useScrollLandscape(root, canvas);
   const focusTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const menu = useRef<HTMLDialogElement>(null);
   const [menuOpen, setMenuOpen] = useState(false);
@@ -69,9 +71,9 @@ export default function CinematicHome({ brand, help, enter }: { brand: ReactNode
         <button className="home-menu-entry" aria-label="打开首页菜单" aria-haspopup="dialog" aria-expanded={menuOpen} aria-controls="home-menu" onClick={openMenu}>菜单</button>
       </div>
     </header>
+    <div className="home-landscape" aria-hidden="true"><canvas ref={canvas} className="home-canvas" width={1280} height={720} /></div>
     <div className="home-scene">
       <section id="home-brand" className="home-chapter home-brand" aria-label="认识留白" data-visible="true">
-        <MountainAtmosphere />
         <div className="home-brand-content">{brand}</div>
         <button className="home-down home-circle" aria-label="向下了解" onClick={() => jump(1)}><ArrowDown size={18} aria-hidden="true" /></button>
       </section>
@@ -79,11 +81,6 @@ export default function CinematicHome({ brand, help, enter }: { brand: ReactNode
         <div className="home-copy">
           <h2 id="home-value-title" tabIndex={-1}>想做的很多，<br /><span className="home-text-medium">这期先做好</span><span className="home-text-soft">什么？</span></h2>
           <p className="home-description">把成功标准、团队产能和需求放在一起，<br className="home-desktop-break" />看清这期能承诺什么，还有哪些条件需要确认。</p>
-          <ol className="home-method">
-            <li><span>01</span><div><h3>写清这期的目标</h3><p>确定成功标准、人数和周期，为规划划定边界。</p></div></li>
-            <li><span>02</span><div><h3>列出需求与前置条件</h3><p>补充工作量，标记本期明确不做的内容。</p></div></li>
-            <li><span>03</span><div><h3>核对 AI 分析与范围建议</h3><p>检查目标覆盖、依赖和原文依据，再带着结论进入规划会。</p></div></li>
-          </ol>
           <button className="home-next home-circle" aria-label="了解如何开始" onClick={() => jump(2)}><ArrowDown size={18} aria-hidden="true" /></button>
         </div>
       </section>
