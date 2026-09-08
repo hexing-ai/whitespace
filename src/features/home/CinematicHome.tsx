@@ -27,7 +27,7 @@ export default function CinematicHome({ brand, help, enter }: { brand: ReactNode
         if (Number(link.dataset.chapterLink) === current) link.setAttribute("aria-current", "location");
         else link.removeAttribute("aria-current");
       }
-    }, { rootMargin: "-80px 0px -60% 0px" });
+    }, { rootMargin: "-80px 0px -20% 0px" });
     sections.forEach(section => observer.observe(section));
     return () => observer.disconnect();
   }, []);

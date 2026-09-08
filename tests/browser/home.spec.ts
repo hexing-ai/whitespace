@@ -27,6 +27,7 @@ for (const width of [390, 768, 1280, 1440]) test(`${width}px: natural continuous
   await expect(page.locator('#home-value-title')).toBeInViewport();
   await page.getByRole('button', { name: '了解如何开始', exact: true }).click();
   await expect(page.locator('#home-action-title')).toBeInViewport();
+  await expect(page.locator('.home-nav-links [data-chapter-link="2"]')).toHaveAttribute('aria-current', 'location');
   await page.getByRole('button', { name: '用示例体验', exact: true }).click();
   await expect(page.getByLabel('人数', { exact: true })).toHaveValue('5');
   await expect(page.locator('.home-atmosphere')).toHaveCount(0);
