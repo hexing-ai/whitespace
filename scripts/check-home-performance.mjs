@@ -60,6 +60,7 @@ try {
       await expect(page.locator('.home-canvas')).toHaveAttribute('data-frame', String(frame), { timeout: constrained ? 6000 : 2500 });
       item[frame === 240 ? 'endCatchupMs' : 'startCatchupMs'] = Date.now() - before;
       expect(await page.locator('.home-nav-links button').first().evaluate(el => getComputedStyle(el).color)).toBe(frame === 240 ? 'rgb(255, 255, 255)' : 'rgb(29, 48, 69)');
+      for (const color of await page.locator('.home-actions button').evaluateAll(els => els.map(el => getComputedStyle(el).color))) expect(color).toBe(frame === 240 ? 'rgb(255, 255, 255)' : 'rgb(29, 48, 69)');
       if (scenario === 'cold') {
         await expect(page.locator('.home-canvas')).toHaveAttribute('data-quality', 'full');
         await page.screenshot({ path: `${output}/scenery-${frame === 240 ? 'end' : 'start'}.png` });

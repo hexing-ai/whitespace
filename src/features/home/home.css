@@ -32,7 +32,7 @@
 .home-eyebrow { color: var(--home-muted); font-size: 14px; letter-spacing: .05em; margin-bottom: 16px; }
 .home-action h2 { font-size: clamp(32px, 4vw, 64px); font-weight: 300; line-height: 1.2; letter-spacing: .05em; margin-bottom: 32px; }
 .home-actions { display: flex; align-items: center; gap: 28px; flex-wrap: wrap; }
-.home-actions button { display: inline-flex; align-items: center; padding: 0; background: transparent; border: 0; color: var(--home-foreground); font-weight: 400; }
+.home-actions button { display: inline-flex; align-items: center; padding: 0; background: transparent; border: 0; color: var(--home-foreground); font-weight: 400; transition: opacity .2s; }
 .home-cta { gap: 16px; font-size: 14px; letter-spacing: .3em; }
 .home-cta span { display: grid; place-items: center; width: 40px; height: 40px; border-radius: 50%; background: var(--home-foreground); color: var(--home-nav-inverse); transition: transform .3s; }
 .home-cta:hover span { transform: scale(1.1); }
