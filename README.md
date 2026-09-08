@@ -2,6 +2,9 @@
 
 **把一堆需求，变成这期能兑现的范围。**
 
+[![CI](https://github.com/hexing-ai/whitespace/actions/workflows/ci.yml/badge.svg)](https://github.com/hexing-ai/whitespace/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-1d3045.svg)](LICENSE)
+
 规划会上，难的往往不是列出想做什么，而是说清楚：**这期必须做什么，为什么，以及什么先不承诺。**
 
 留白把成功标准、需求依赖和团队产能放在一起分析，生成可核对的 MoSCoW 范围建议，并把取舍整理成一份可复制的会议结论。
