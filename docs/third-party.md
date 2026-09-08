@@ -6,14 +6,13 @@
 | --- | --- |
 | WebGL Fluid Simulation 改造部分 | MIT；版权和许可见 `public/licenses/webgl-fluid.txt`，版本及改造信息见 `src/features/hero-ink/upstream.json` |
 | Lucide 图标 | ISC；见 `public/licenses/lucide.txt` |
-| MP4Box.js | BSD-3-Clause；见 `public/licenses/mp4box.txt` |
 | npm 依赖 | 以各依赖自带许可证为准，准确版本见 `package-lock.json` |
 | 字体 | 使用设备已有的系统字体栈，不打包或下载商业字体文件 |
 
 页面截图展示本项目真实界面和内置示例数据。模型输出属于一次实际调用结果，不是每次运行的保证。
 
-## 首页媒体
+## 首页背景
 
-原视频来源地址集中在 `src/features/home/config.ts`；本仓库不包含 MP4 原文件。首页实际加载 `public/media/frames/` 中发布前生成的 241 张 WebP 帧，不再由访客浏览器下载和转换视频；这些派生图片沿用源媒体的许可边界。`public/media/whitespace-mountains.webp` 是首页封面，`docs/images/home.png` 是含背景的页面截图。
+当前首页的简化山形与雾层由本项目使用内联 SVG 和 CSS 绘制，随自有代码采用 MIT 许可。当前版本不再包含原山景封面、视频派生帧或 MP4Box 依赖；首页截图已更新为此版本。
 
-这些媒体不纳入项目自有代码的 MIT 许可。现有源链接未附独立再分发许可证，媒体的完整授权范围尚待补充；二次分发或商用发布时应替换为自有或已获授权的媒体。工作台功能和业务规则不依赖具体山景素材。
+历史版本中的外部媒体不因这次替换获得新授权，也不纳入项目 MIT 许可。复用旧版本媒体仍需自行核实相应授权。

@@ -48,7 +48,7 @@ flowchart TD
 
 | 位置 | 职责 |
 | --- | --- |
-| `src/features/home/` | 首页、按需加载预处理帧、移动端静态回退 |
+| `src/features/home/` | 自然滚动首页、原创 SVG 山景、轻量 CSS 雾层 |
 | `src/features/planner/` | 五视图、表单状态、API 客户端、结果与复制 |
 | `src/app/api/prioritize/route.ts` | HTTP 边界与请求生命周期 |
 | `src/lib/qwen.ts`、`prompt.ts` | 百炼配置、结构化分析与有限重试 |
@@ -58,4 +58,4 @@ flowchart TD
 | `src/lib/demo-guard.ts` | 公共 Demo 的输入与实例内调用限制 |
 | `tests/` | 独立场景、规则测试、API 与浏览器测试 |
 
-首页通过版本化静态图片按需加载：最多 4 个并行下载/解码，最多 24 个 ImageBitmap。进入工作台后中止请求并释放图像资源；隐藏时暂停，静止且附近帧准备完成后不空转。整段视频的解码和转图只在发布前执行，详见[首页性能](home-performance.md)。保留的水墨组件属于可复用组件，当前首页不加载它。
+首页使用内联 SVG 山形与两层 CSS 雾，不请求视频、图片帧或外部字体，也不运行 Canvas、Worker 或滚动 RAF。正文为自然文档流，导航定位真实段落；触屏与减少动态效果使用静态背景，离屏和页面隐藏暂停雾层。进入工作台卸载首页并清理观察器与监听。详见[首页性能](home-performance.md)。保留的水墨组件当前首页不加载。

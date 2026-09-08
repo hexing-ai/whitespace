@@ -1,72 +1,101 @@
-import { test, expect, type Page } from '@playwright/test';
-async function progress(page: Page, value: number) { await page.locator('.cinematic-home').evaluate((el,p)=>scrollTo(0,p*(el.clientHeight-innerHeight)),value); }
+import { test, expect } from '@playwright/test';
 
-test('prepared frames restore the complete timeline without MP4 or video workers and release GPU images',async({page})=>{
- await page.setViewportSize({width:1440,height:900});
- await page.addInitScript(()=>{
-  let live=0,peak=0;const create=window.createImageBitmap;
-  window.createImageBitmap=(async(...args:unknown[])=>{const b=await Reflect.apply(create,window,args) as ImageBitmap;live++;peak=Math.max(peak,live);const update=()=>Object.assign(document.documentElement.dataset,{liveBitmaps:String(live),peakBitmaps:String(peak)});update();const close=b.close.bind(b);let open=true;b.close=()=>{if(open){open=false;live--;update();}close();};return b;}) as typeof createImageBitmap;
- });
- const resources:string[]=[],errors:string[]=[];let workers=0;
- page.on('request',r=>resources.push(r.url()));page.on('worker',()=>workers++);page.on('pageerror',e=>errors.push(e.message));
- await page.goto('/');const home=page.locator('.cinematic-home'),canvas=page.locator('.home-canvas');
- await expect(home).toHaveAttribute('data-renderer','canvas');
- await expect(home).toHaveAttribute('data-bank-frames','241');
- await page.waitForTimeout(500);
- expect(resources.filter(u=>u.includes('/media/frames/')).length).toBeLessThanOrEqual(17);
- expect(resources.filter(u=>u.includes('.mp4'))).toEqual([]);expect(workers).toBe(0);
- for(const p of [.45,.9,.1,1,0]){await progress(page,p);await expect.poll(()=>canvas.evaluate((el,p)=>Math.abs(Number(el.dataset.time)-p*10.041667),p)).toBeLessThan(.05);}
- expect(Number(await page.locator('html').getAttribute('data-peak-bitmaps'))).toBeLessThanOrEqual(24);
- await page.locator('.home-plan-entry').click();
- await expect(page.locator('html')).toHaveAttribute('data-live-bitmaps','0');expect(errors).toEqual([]);
+for (const width of [390, 768, 1280, 1440]) test(`${width}px: natural continuous flow, readable content and no media downloads`, async ({ page }) => {
+  await page.setViewportSize({ width, height: 900 });
+  const media: string[] = [], errors: string[] = [];
+  page.on('request', r => { if (/\.(mp4|webp)(\?|$)|\/media\/frames\//.test(r.url())) media.push(r.url()); });
+  page.on('pageerror', e => errors.push(e.message));
+  await page.goto('/');
+  await expect(page.locator('.cinematic-home')).toHaveAttribute('data-mode', 'natural');
+  const layout = await page.locator('.home-chapter').evaluateAll(elements => elements.map(el => {
+    const box = el.getBoundingClientRect(), css = getComputedStyle(el);
+    return { top: box.top + scrollY, bottom: box.bottom + scrollY, position: css.position, opacity: css.opacity, minHeight: css.minHeight };
+  }));
+  expect(layout).toHaveLength(3);
+  for (let i = 0; i < layout.length; i++) {
+    expect(layout[i].position).toBe('relative'); expect(layout[i].opacity).toBe('1');
+    if (i) { expect(layout[i].top).toBeCloseTo(layout[i - 1].bottom); expect(layout[i].minHeight).toBe('0px'); }
+  }
+  // Fast native wheel input must move the document, not a pinned chapter timeline.
+  for (const delta of [410, 630, -380, 960, -1620]) {
+    await page.mouse.wheel(0, delta); await page.waitForTimeout(150);
+    await expect(page.locator('.home-plan-entry')).toBeInViewport();
+    expect(await page.locator('.home-chapter').evaluateAll(els => els.every(el => !el.hasAttribute('inert') && getComputedStyle(el).opacity === '1'))).toBe(true);
+  }
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+  await page.getByRole('button', { name: '向下了解', exact: true }).click();
+  await expect(page.locator('#home-value-title')).toBeInViewport();
+  await page.getByRole('button', { name: '了解如何开始', exact: true }).click();
+  await expect(page.locator('#home-action-title')).toBeInViewport();
+  await page.getByRole('button', { name: '用示例体验', exact: true }).click();
+  await expect(page.getByLabel('人数', { exact: true })).toHaveValue('5');
+  await expect(page.locator('.home-atmosphere')).toHaveCount(0);
+  expect(media).toEqual([]); expect(errors).toEqual([]);
 });
 
-for(const mode of ['reduced','touch','narrow','unsupported'] as const)test(`${mode} reads normally without downloading animation frames`,async({browser})=>{
- const context=await browser.newContext({viewport:mode==='narrow'?{width:390,height:844}:{width:1440,height:900},hasTouch:mode==='touch',reducedMotion:mode==='reduced'?'reduce':'no-preference'});
- const page=await context.newPage();if(mode==='unsupported')await page.addInitScript(()=>{Reflect.deleteProperty(window,'createImageBitmap');});
- const resources:string[]=[];page.on('request',r=>{if(/\.mp4|\/media\/frames\//.test(r.url()))resources.push(r.url());});
- await page.goto('/');await expect(page.locator('.cinematic-home')).toHaveAttribute('data-mode','static');
- await page.getByRole('button',{name:'向下了解'}).click();await page.getByRole('button',{name:'了解如何开始'}).click();await page.getByRole('button',{name:'用示例体验'}).click();
- await expect(page.getByLabel('人数',{exact:true})).toHaveValue('5');expect(resources).toEqual([]);await context.close();
+test('background is decorative, pauses offscreen and cleans up on exit', async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto('/');
+  const atmosphere = page.locator('.home-atmosphere'), fog = page.locator('.home-fog').first();
+  await expect(atmosphere).toHaveAttribute('data-active', 'true');
+  expect(await atmosphere.evaluate(el => getComputedStyle(el).pointerEvents)).toBe('none');
+  await expect.poll(() => fog.evaluate(el => getComputedStyle(el).animationPlayState)).toBe('running');
+  const first = await fog.evaluate(el => getComputedStyle(el).transform); await page.waitForTimeout(300);
+  expect(await fog.evaluate(el => getComputedStyle(el).transform)).not.toBe(first);
+  await page.locator('#home-action').scrollIntoViewIfNeeded();
+  await expect(atmosphere).toHaveAttribute('data-active', 'false');
+  await expect.poll(() => fog.evaluate(el => getComputedStyle(el).animationPlayState)).toBe('paused');
+  await page.locator('#home-brand').scrollIntoViewIfNeeded();
+  await expect(atmosphere).toHaveAttribute('data-active', 'true');
+  // Native selection still works over the SVG and gradients.
+  expect(await page.locator('.home-brand h1').evaluate(el => { const range = document.createRange(); range.selectNodeContents(el); const selection = getSelection()!; selection.removeAllRanges(); selection.addRange(range); return selection.toString(); })).toContain('留白');
+  await page.locator('.home-plan-entry').click();
+  expect(await page.evaluate(() => document.getAnimations().filter(a => (a.effect as KeyframeEffect)?.target instanceof Element && ((a.effect as KeyframeEffect).target as Element).matches('.home-fog')).length)).toBe(0);
 });
 
-test('slow initial frames show the poster and leave planning immediately usable',async({page})=>{
- await page.setViewportSize({width:1440,height:900});await page.route('**/media/frames/**',()=>{});
- await page.goto('/');await expect(page.locator('.cinematic-home')).toHaveAttribute('data-renderer','poster');
- await page.locator('.home-plan-entry').click();await expect(page.getByLabel('成功标准',{exact:true})).toBeVisible();
+for (const mode of ['reduced', 'touch', 'unsupported'] as const) test(`${mode}: background stays static and navigation works`, async ({ browser }) => {
+  const context = await browser.newContext({ viewport: { width: 1440, height: 900 }, hasTouch: mode === 'touch', reducedMotion: mode === 'reduced' ? 'reduce' : 'no-preference' });
+  const page = await context.newPage();
+  if (mode === 'unsupported') await page.addInitScript(() => { Reflect.deleteProperty(window, 'IntersectionObserver'); });
+  await page.goto('/'); await expect(page.locator('.home-brand h1')).toBeVisible();
+  const fog = page.locator('.home-fog').first();
+  if (mode === 'unsupported') await expect(page.locator('.home-atmosphere')).toHaveAttribute('data-active', 'false');
+  else expect(await fog.evaluate(el => getComputedStyle(el).animationName)).toBe('none');
+  await page.locator('.home-plan-entry').click(); await expect(page.getByLabel('成功标准', { exact: true })).toBeVisible();
+  await context.close();
 });
 
-test('missing frames restore readable content and all navigation',async({page})=>{
- await page.setViewportSize({width:1440,height:900});await page.route('**/media/frames/**',r=>r.fulfill({status:404,body:''}));
- await page.goto('/');await expect(page.locator('.cinematic-home')).toHaveAttribute('data-video-state','unavailable');
- await expect(page.locator('.home-chapter[inert]')).toHaveCount(0);await page.getByRole('button',{name:'用示例体验'}).click();await expect(page.getByLabel('人数',{exact:true})).toHaveValue('5');
+test('changing motion preference keeps reading position and disables animation', async ({ page }) => {
+  await page.goto('/'); await expect(page.locator('.home-brand h1')).toBeVisible();
+  await page.evaluate(() => scrollTo(0, 240)); const before = await page.evaluate(() => scrollY);
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  expect(await page.evaluate(() => scrollY)).toBe(before);
+  expect(await page.locator('.home-fog').first().evaluate(el => getComputedStyle(el).animationName)).toBe('none');
 });
 
-test('stalled frame download falls back within five seconds',async({page})=>{
- await page.setViewportSize({width:1440,height:900});await page.route('**/media/frames/**',()=>{});await page.clock.install();
- await page.goto('/');await expect(page.locator('.cinematic-home')).toHaveAttribute('data-video-state','loading');
- await page.clock.fastForward(5001);await expect(page.locator('.cinematic-home')).toHaveAttribute('data-mode','static');
- await page.getByRole('button',{name:'用示例体验'}).click();await expect(page.getByLabel('人数',{exact:true})).toHaveValue('5');
+test('skip intro opens the workspace without loading the home component', async ({ page }) => {
+  await page.addInitScript(() => localStorage.setItem('whitespace:skip-intro:v1', 'true'));
+  const homeRequests: string[] = [];
+  page.on('request', r => { if (/features_home|\/media\/|hero-ink/.test(r.url())) homeRequests.push(r.url()); });
+  await page.goto('/'); await expect(page.getByLabel('成功标准', { exact: true })).toBeVisible();
+  await expect(page.locator('.home-atmosphere')).toHaveCount(0); expect(homeRequests).toEqual([]);
 });
 
-test('reduced motion changed during the story releases frames and preserves reading position',async({page})=>{
- await page.setViewportSize({width:1440,height:900});await page.goto('/');await expect(page.locator('.cinematic-home')).toHaveAttribute('data-renderer','canvas');
- await progress(page,.9);await expect(page.locator('.cinematic-home')).toHaveAttribute('data-chapter','3');await page.emulateMedia({reducedMotion:'reduce'});
- await expect(page.locator('.cinematic-home')).toHaveAttribute('data-mode','static');await expect(page.locator('.home-chapter[inert]')).toHaveCount(0);
- await page.getByRole('button',{name:'用示例体验'}).click();await expect(page.getByLabel('人数',{exact:true})).toHaveValue('5');
-});
-
-test('skip preference does not load the home animation',async({page})=>{
- await page.addInitScript(()=>localStorage.setItem('whitespace:skip-intro:v1','true'));const resources:string[]=[];
- page.on('request',r=>{if(/\.mp4|\/media\/frames\/|whitespace-mountains|hero-ink|features_home/.test(r.url()))resources.push(r.url());});
- await page.goto('/');await expect(page.getByLabel('成功标准',{exact:true})).toBeVisible();expect(resources).toEqual([]);
-});
-
-test('slow frame downloads fall back instead of continuing to stutter',async({page,context})=>{
- const cdp=await context.newCDPSession(page);await cdp.send('Network.enable');
- await cdp.send('Network.emulateNetworkConditions',{offline:false,latency:150,downloadThroughput:200000,uploadThroughput:100000});
- await page.setViewportSize({width:1440,height:900});const frames:string[]=[];
- page.on('request',r=>{if(r.url().includes('/media/frames/'))frames.push(r.url());});
- await page.goto('/');await expect(page.locator('.cinematic-home')).toHaveAttribute('data-video-state','unavailable',{timeout:6000});await expect(page.locator('.cinematic-home')).toHaveAttribute('data-mode','static');
- await page.getByRole('button',{name:'用示例体验'}).click();await expect(page.getByLabel('人数',{exact:true})).toHaveValue('5');expect(frames.length).toBeLessThanOrEqual(8);
+test('hidden document pauses fog and visibility listener is removed on unmount', async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.addInitScript(() => {
+    const add = document.addEventListener.bind(document), remove = document.removeEventListener.bind(document);
+    const listeners = new Set();
+    document.addEventListener = ((name: string, fn: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions) => { if (name === 'visibilitychange') listeners.add(fn); add(name, fn, options); }) as typeof document.addEventListener;
+    document.removeEventListener = ((name: string, fn: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions) => { if (name === 'visibilitychange') listeners.delete(fn); remove(name, fn, options); }) as typeof document.removeEventListener;
+    Object.defineProperty(window, '__visibilityListeners', { get: () => listeners.size });
+  });
+  await page.goto('/'); await expect(page.locator('.home-atmosphere')).toHaveAttribute('data-active', 'true');
+  const count = await page.evaluate(() => Reflect.get(window, '__visibilityListeners'));
+  await page.evaluate(() => { Object.defineProperty(document, 'hidden', { configurable: true, value: true }); document.dispatchEvent(new Event('visibilitychange')); });
+  await expect(page.locator('.home-atmosphere')).toHaveAttribute('data-active', 'false');
+  await page.evaluate(() => { Reflect.deleteProperty(document, 'hidden'); document.dispatchEvent(new Event('visibilitychange')); });
+  await expect(page.locator('.home-atmosphere')).toHaveAttribute('data-active', 'true');
+  await page.locator('.home-plan-entry').click();
+  expect(await page.evaluate(() => Reflect.get(window, '__visibilityListeners'))).toBe(count - 1);
 });
