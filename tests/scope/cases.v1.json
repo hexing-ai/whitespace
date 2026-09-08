@@ -1,0 +1,946 @@
+{
+  "models": [
+    "qwen3.6-plus"
+  ],
+  "repeatCases": [
+    "scope_extensions_out",
+    "scope_both_required",
+    "scope_helpers_kept",
+    "scope_cross_domain"
+  ],
+  "cases": [
+    {
+      "id": "scope_extensions_out",
+      "input": {
+        "people": 5,
+        "workdays": 10,
+        "success": "访客能报名",
+        "requirements": [
+          {
+            "id": "r1",
+            "name": "报名入口",
+            "desc": "访客填写报名信息并提交",
+            "estimateDays": 1
+          },
+          {
+            "id": "r2",
+            "name": "完成礼",
+            "desc": "报名完成后向访客赠送优惠券",
+            "estimateDays": 1
+          },
+          {
+            "id": "r3",
+            "name": "阅读版本",
+            "desc": "报名页提供中文和英文切换",
+            "estimateDays": 1
+          }
+        ]
+      },
+      "expected": {
+        "feasibility": "feasible",
+        "essentialIds": [
+          "r1"
+        ],
+        "goalRequired": [
+          [
+            "r1"
+          ]
+        ],
+        "shouldIds": [],
+        "couldIds": [],
+        "wontIds": [
+          "r2",
+          "r3"
+        ],
+        "candidateIds": [],
+        "dependencyPairs": [],
+        "scopeGroups": true
+      },
+      "oracle": {
+        "scopes": [
+          "core",
+          "incentive",
+          "audience"
+        ],
+        "links": {},
+        "dependencies": []
+      }
+    },
+    {
+      "id": "scope_reward_required",
+      "input": {
+        "people": 5,
+        "workdays": 10,
+        "success": "访客能报名；报名完成后访客能领取优惠券",
+        "requirements": [
+          {
+            "id": "r1",
+            "name": "报名入口",
+            "desc": "访客填写报名信息并提交",
+            "estimateDays": 1
+          },
+          {
+            "id": "r2",
+            "name": "完成礼",
+            "desc": "报名完成后向访客赠送优惠券",
+            "estimateDays": 1
+          },
+          {
+            "id": "r3",
+            "name": "阅读版本",
+            "desc": "报名页提供中文和英文切换",
+            "estimateDays": 1
+          }
+        ]
+      },
+      "expected": {
+        "feasibility": "feasible",
+        "essentialIds": [
+          "r1",
+          "r2"
+        ],
+        "goalRequired": [
+          [
+            "r1"
+          ],
+          [
+            "r2"
+          ]
+        ],
+        "shouldIds": [],
+        "couldIds": [],
+        "wontIds": [
+          "r3"
+        ],
+        "candidateIds": [],
+        "dependencyPairs": [],
+        "scopeGroups": true
+      },
+      "oracle": {
+        "scopes": [
+          "core",
+          "incentive",
+          "audience"
+        ],
+        "links": {},
+        "dependencies": []
+      }
+    },
+    {
+      "id": "scope_language_required",
+      "input": {
+        "people": 5,
+        "workdays": 10,
+        "success": "访客能报名；访客能切换中英文",
+        "requirements": [
+          {
+            "id": "r1",
+            "name": "报名入口",
+            "desc": "访客填写报名信息并提交",
+            "estimateDays": 1
+          },
+          {
+            "id": "r2",
+            "name": "完成礼",
+            "desc": "报名完成后向访客赠送优惠券",
+            "estimateDays": 1
+          },
+          {
+            "id": "r3",
+            "name": "阅读版本",
+            "desc": "报名页提供中文和英文切换",
+            "estimateDays": 1
+          }
+        ]
+      },
+      "expected": {
+        "feasibility": "feasible",
+        "essentialIds": [
+          "r1",
+          "r3"
+        ],
+        "goalRequired": [
+          [
+            "r1"
+          ],
+          [
+            "r3"
+          ]
+        ],
+        "shouldIds": [],
+        "couldIds": [],
+        "wontIds": [
+          "r2"
+        ],
+        "candidateIds": [],
+        "dependencyPairs": [],
+        "scopeGroups": true
+      },
+      "oracle": {
+        "scopes": [
+          "core",
+          "incentive",
+          "audience"
+        ],
+        "links": {},
+        "dependencies": []
+      }
+    },
+    {
+      "id": "scope_both_required",
+      "input": {
+        "people": 5,
+        "workdays": 10,
+        "success": "访客能报名；报名完成后访客能领取优惠券；访客能切换中英文",
+        "requirements": [
+          {
+            "id": "r1",
+            "name": "报名入口",
+            "desc": "访客填写报名信息并提交",
+            "estimateDays": 1
+          },
+          {
+            "id": "r2",
+            "name": "完成礼",
+            "desc": "报名完成后向访客赠送优惠券",
+            "estimateDays": 1
+          },
+          {
+            "id": "r3",
+            "name": "阅读版本",
+            "desc": "报名页提供中文和英文切换",
+            "estimateDays": 1
+          }
+        ]
+      },
+      "expected": {
+        "feasibility": "feasible",
+        "essentialIds": [
+          "r1",
+          "r2",
+          "r3"
+        ],
+        "goalRequired": [
+          [
+            "r1"
+          ],
+          [
+            "r2"
+          ],
+          [
+            "r3"
+          ]
+        ],
+        "shouldIds": [],
+        "couldIds": [],
+        "wontIds": [],
+        "candidateIds": [],
+        "dependencyPairs": [],
+        "scopeGroups": true
+      },
+      "oracle": {
+        "scopes": [
+          "core",
+          "incentive",
+          "audience"
+        ],
+        "links": {},
+        "dependencies": []
+      }
+    },
+    {
+      "id": "scope_renamed",
+      "input": {
+        "people": 5,
+        "workdays": 10,
+        "success": "学员能预约课程",
+        "requirements": [
+          {
+            "id": "a",
+            "name": "模块甲",
+            "desc": "学员提交课程预约",
+            "estimateDays": 1
+          },
+          {
+            "id": "b",
+            "name": "模块乙",
+            "desc": "学员预约后获赠下次消费可抵扣的代金券",
+            "estimateDays": 1
+          },
+          {
+            "id": "c",
+            "name": "模块丙",
+            "desc": "预约页面支持英语和日语版本",
+            "estimateDays": 1
+          }
+        ]
+      },
+      "expected": {
+        "feasibility": "feasible",
+        "essentialIds": [
+          "a"
+        ],
+        "goalRequired": [
+          [
+            "a"
+          ]
+        ],
+        "shouldIds": [],
+        "couldIds": [],
+        "wontIds": [
+          "b",
+          "c"
+        ],
+        "candidateIds": [],
+        "dependencyPairs": [],
+        "scopeGroups": true
+      },
+      "oracle": {
+        "scopes": [
+          "core",
+          "incentive",
+          "audience"
+        ],
+        "links": {},
+        "dependencies": []
+      }
+    },
+    {
+      "id": "scope_reordered",
+      "input": {
+        "people": 5,
+        "workdays": 10,
+        "success": "学员能预约课程",
+        "requirements": [
+          {
+            "id": "c",
+            "name": "模块丙",
+            "desc": "预约页面支持英语和日语版本",
+            "estimateDays": 1
+          },
+          {
+            "id": "b",
+            "name": "模块乙",
+            "desc": "学员预约后获赠下次消费可抵扣的代金券",
+            "estimateDays": 1
+          },
+          {
+            "id": "a",
+            "name": "模块甲",
+            "desc": "学员提交课程预约",
+            "estimateDays": 1
+          }
+        ]
+      },
+      "expected": {
+        "feasibility": "feasible",
+        "essentialIds": [
+          "a"
+        ],
+        "goalRequired": [
+          [
+            "a"
+          ]
+        ],
+        "shouldIds": [],
+        "couldIds": [],
+        "wontIds": [
+          "b",
+          "c"
+        ],
+        "candidateIds": [],
+        "dependencyPairs": [],
+        "scopeGroups": true
+      },
+      "oracle": {
+        "scopes": [
+          "audience",
+          "incentive",
+          "core"
+        ],
+        "links": {},
+        "dependencies": []
+      }
+    },
+    {
+      "id": "scope_helpers_kept",
+      "input": {
+        "people": 5,
+        "workdays": 10,
+        "success": "用户能提交资料",
+        "requirements": [
+          {
+            "id": "a",
+            "name": "资料提交",
+            "desc": "用户提交资料",
+            "estimateDays": 1
+          },
+          {
+            "id": "b",
+            "name": "结果通知",
+            "desc": "资料提交结果短信通知用户",
+            "estimateDays": 1
+          },
+          {
+            "id": "c",
+            "name": "结果导出",
+            "desc": "管理员导出资料提交记录",
+            "estimateDays": 1
+          },
+          {
+            "id": "d",
+            "name": "表单外观",
+            "desc": "调整资料提交表单的字号与间距",
+            "estimateDays": 1
+          }
+        ]
+      },
+      "expected": {
+        "feasibility": "feasible",
+        "essentialIds": [
+          "a"
+        ],
+        "goalRequired": [
+          [
+            "a"
+          ]
+        ],
+        "shouldIds": [
+          "b",
+          "c"
+        ],
+        "couldIds": [
+          "d"
+        ],
+        "wontIds": [],
+        "candidateIds": [],
+        "dependencyPairs": [],
+        "scopeGroups": true
+      },
+      "oracle": {
+        "scopes": [
+          "core",
+          "operation",
+          "operation",
+          "presentation"
+        ],
+        "links": {
+          "b": [
+            [
+              "g1",
+              "supporting"
+            ]
+          ],
+          "c": [
+            [
+              "g1",
+              "supporting"
+            ]
+          ],
+          "d": [
+            [
+              "g1",
+              "optional"
+            ]
+          ]
+        },
+        "dependencies": []
+      }
+    },
+    {
+      "id": "scope_misleading_name",
+      "input": {
+        "people": 5,
+        "workdays": 10,
+        "success": "用户能提交资料",
+        "requirements": [
+          {
+            "id": "a",
+            "name": "资料提交",
+            "desc": "用户提交资料",
+            "estimateDays": 1
+          },
+          {
+            "id": "b",
+            "name": "优惠券",
+            "desc": "短信通知资料提交结果，不发放优惠券",
+            "estimateDays": 1
+          }
+        ]
+      },
+      "expected": {
+        "feasibility": "feasible",
+        "essentialIds": [
+          "a"
+        ],
+        "goalRequired": [
+          [
+            "a"
+          ]
+        ],
+        "shouldIds": [
+          "b"
+        ],
+        "couldIds": [],
+        "wontIds": [],
+        "candidateIds": [],
+        "dependencyPairs": [],
+        "scopeGroups": true
+      },
+      "oracle": {
+        "scopes": [
+          "core",
+          "operation"
+        ],
+        "links": {
+          "b": [
+            [
+              "g1",
+              "supporting"
+            ]
+          ]
+        },
+        "dependencies": []
+      }
+    },
+    {
+      "id": "scope_named_language",
+      "input": {
+        "people": 5,
+        "workdays": 10,
+        "success": "用户能提交资料",
+        "requirements": [
+          {
+            "id": "a",
+            "name": "资料提交",
+            "desc": "用户提交资料",
+            "estimateDays": 1
+          },
+          {
+            "id": "b",
+            "name": "多语言",
+            "desc": "调整资料表单的字号，不增加其他语言版本",
+            "estimateDays": 1
+          }
+        ]
+      },
+      "expected": {
+        "feasibility": "feasible",
+        "essentialIds": [
+          "a"
+        ],
+        "goalRequired": [
+          [
+            "a"
+          ]
+        ],
+        "shouldIds": [],
+        "couldIds": [
+          "b"
+        ],
+        "wontIds": [],
+        "candidateIds": [],
+        "dependencyPairs": [],
+        "scopeGroups": true
+      },
+      "oracle": {
+        "scopes": [
+          "core",
+          "presentation"
+        ],
+        "links": {
+          "b": [
+            [
+              "g1",
+              "optional"
+            ]
+          ]
+        },
+        "dependencies": []
+      }
+    },
+    {
+      "id": "scope_cross_domain",
+      "input": {
+        "people": 5,
+        "workdays": 10,
+        "success": "客户能提交维修申请",
+        "requirements": [
+          {
+            "id": "a",
+            "name": "报修",
+            "desc": "客户提交维修申请",
+            "estimateDays": 1
+          },
+          {
+            "id": "b",
+            "name": "回馈",
+            "desc": "提交维修申请后奖励客户积分",
+            "estimateDays": 1
+          },
+          {
+            "id": "c",
+            "name": "海外版",
+            "desc": "维修申请表支持西班牙语",
+            "estimateDays": 1
+          }
+        ]
+      },
+      "expected": {
+        "feasibility": "feasible",
+        "essentialIds": [
+          "a"
+        ],
+        "goalRequired": [
+          [
+            "a"
+          ]
+        ],
+        "shouldIds": [],
+        "couldIds": [],
+        "wontIds": [
+          "b",
+          "c"
+        ],
+        "candidateIds": [],
+        "dependencyPairs": [],
+        "scopeGroups": true
+      },
+      "oracle": {
+        "scopes": [
+          "core",
+          "incentive",
+          "audience"
+        ],
+        "links": {},
+        "dependencies": []
+      }
+    },
+    {
+      "id": "scope_negative_goal",
+      "input": {
+        "people": 5,
+        "workdays": 10,
+        "success": "用户能提交资料但本期不发优惠券",
+        "requirements": [
+          {
+            "id": "a",
+            "name": "资料提交",
+            "desc": "用户提交资料",
+            "estimateDays": 1
+          },
+          {
+            "id": "b",
+            "name": "完成奖励",
+            "desc": "提交资料后赠送优惠券",
+            "estimateDays": 1
+          }
+        ]
+      },
+      "expected": {
+        "feasibility": "feasible",
+        "essentialIds": [
+          "a"
+        ],
+        "goalRequired": [
+          [
+            "a"
+          ]
+        ],
+        "shouldIds": [],
+        "couldIds": [],
+        "wontIds": [
+          "b"
+        ],
+        "candidateIds": [],
+        "dependencyPairs": [],
+        "scopeGroups": true
+      },
+      "oracle": {
+        "scopes": [
+          "core",
+          "incentive"
+        ],
+        "links": {},
+        "dependencies": []
+      }
+    },
+    {
+      "id": "scope_goal_reversal",
+      "input": {
+        "people": 5,
+        "workdays": 10,
+        "success": "客户能领取返现奖励",
+        "requirements": [
+          {
+            "id": "a",
+            "name": "领取奖励",
+            "desc": "客户领取返现奖励",
+            "estimateDays": 1
+          },
+          {
+            "id": "b",
+            "name": "维修申请",
+            "desc": "客户提交维修申请",
+            "estimateDays": 1
+          }
+        ]
+      },
+      "expected": {
+        "feasibility": "feasible",
+        "essentialIds": [
+          "a"
+        ],
+        "goalRequired": [
+          [
+            "a"
+          ]
+        ],
+        "shouldIds": [],
+        "couldIds": [],
+        "wontIds": [
+          "b"
+        ],
+        "candidateIds": [],
+        "dependencyPairs": [],
+        "scopeGroups": true
+      },
+      "oracle": {
+        "scopes": [
+          "incentive",
+          "extension"
+        ],
+        "links": {},
+        "dependencies": []
+      }
+    },
+    {
+      "id": "scope_explicit_prerequisite",
+      "input": {
+        "people": 5,
+        "workdays": 10,
+        "success": "用户能查看活动入场码",
+        "requirements": [
+          {
+            "id": "a",
+            "name": "活动入场码",
+            "desc": "只有奖励发放完成后才能查看活动入场码",
+            "estimateDays": 1
+          },
+          {
+            "id": "b",
+            "name": "奖励发放",
+            "desc": "向用户发放奖励",
+            "estimateDays": 1
+          }
+        ]
+      },
+      "expected": {
+        "feasibility": "feasible",
+        "essentialIds": [
+          "a",
+          "b"
+        ],
+        "goalRequired": [
+          [
+            "a",
+            "b"
+          ]
+        ],
+        "shouldIds": [],
+        "couldIds": [],
+        "wontIds": [],
+        "candidateIds": [],
+        "dependencyPairs": [
+          [
+            "a",
+            "b"
+          ]
+        ],
+        "scopeGroups": true
+      },
+      "oracle": {
+        "scopes": [
+          "core",
+          "incentive"
+        ],
+        "links": {},
+        "dependencies": [
+          [
+            "a",
+            "b"
+          ]
+        ]
+      }
+    },
+    {
+      "id": "scope_reward_notification",
+      "input": {
+        "people": 5,
+        "workdays": 10,
+        "success": "用户能领取奖励",
+        "requirements": [
+          {
+            "id": "a",
+            "name": "领奖",
+            "desc": "用户领取奖励",
+            "estimateDays": 1
+          },
+          {
+            "id": "b",
+            "name": "通知",
+            "desc": "短信通知领奖结果，不发放新的奖励",
+            "estimateDays": 1
+          },
+          {
+            "id": "c",
+            "name": "字号",
+            "desc": "调整领奖页面的字号",
+            "estimateDays": 1
+          }
+        ]
+      },
+      "expected": {
+        "feasibility": "feasible",
+        "essentialIds": [
+          "a"
+        ],
+        "goalRequired": [
+          [
+            "a"
+          ]
+        ],
+        "shouldIds": [
+          "b"
+        ],
+        "couldIds": [
+          "c"
+        ],
+        "wontIds": [],
+        "candidateIds": [],
+        "dependencyPairs": [],
+        "scopeGroups": true
+      },
+      "oracle": {
+        "scopes": [
+          "incentive",
+          "operation",
+          "presentation"
+        ],
+        "links": {
+          "b": [
+            [
+              "g1",
+              "supporting"
+            ]
+          ],
+          "c": [
+            [
+              "g1",
+              "optional"
+            ]
+          ]
+        },
+        "dependencies": []
+      }
+    },
+    {
+      "id": "scope_bundled_extension",
+      "input": {
+        "people": 5,
+        "workdays": 10,
+        "success": "用户能提交资料",
+        "requirements": [
+          {
+            "id": "a",
+            "name": "资料提交",
+            "desc": "用户提交资料",
+            "estimateDays": 1
+          },
+          {
+            "id": "b",
+            "name": "结果服务",
+            "desc": "短信通知资料提交结果，同时赠送优惠券",
+            "estimateDays": 1
+          }
+        ]
+      },
+      "expected": {
+        "feasibility": "feasible",
+        "essentialIds": [
+          "a"
+        ],
+        "goalRequired": [
+          [
+            "a"
+          ]
+        ],
+        "shouldIds": [],
+        "couldIds": [],
+        "wontIds": [
+          "b"
+        ],
+        "candidateIds": [],
+        "dependencyPairs": [],
+        "scopeGroups": true
+      },
+      "oracle": {
+        "scopes": [
+          "core",
+          "incentive"
+        ],
+        "links": {},
+        "dependencies": []
+      }
+    },
+    {
+      "id": "scope_extension_requested",
+      "input": {
+        "people": 5,
+        "workdays": 10,
+        "success": "运营能查看申请数量排行",
+        "requirements": [
+          {
+            "id": "a",
+            "name": "数量排行",
+            "desc": "按申请数量展示排行",
+            "estimateDays": 1
+          },
+          {
+            "id": "b",
+            "name": "海报",
+            "desc": "为申请入口生成推广海报",
+            "estimateDays": 1
+          }
+        ]
+      },
+      "expected": {
+        "feasibility": "feasible",
+        "essentialIds": [
+          "a"
+        ],
+        "goalRequired": [
+          [
+            "a"
+          ]
+        ],
+        "shouldIds": [],
+        "couldIds": [],
+        "wontIds": [
+          "b"
+        ],
+        "candidateIds": [],
+        "dependencyPairs": [],
+        "scopeGroups": true
+      },
+      "oracle": {
+        "scopes": [
+          "extension",
+          "extension"
+        ],
+        "links": {},
+        "dependencies": []
+      }
+    }
+  ]
+}

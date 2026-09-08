@@ -1,0 +1,936 @@
+{
+  "models": [
+    "qwen3.6-plus"
+  ],
+  "repeatCases": [
+    "exclude_transitive",
+    "exclude_uncertain",
+    "exclude_association"
+  ],
+  "cases": [
+    {
+      "id": "exclude_support",
+      "input": {
+        "people": 5,
+        "workdays": 10,
+        "success": "编辑能发布文章",
+        "requirements": [
+          {
+            "id": "r1",
+            "name": "发布文章",
+            "desc": "编辑发布文章",
+            "estimateDays": 1
+          },
+          {
+            "id": "r2",
+            "name": "文章通知",
+            "desc": "文章发布结果通知编辑",
+            "estimateDays": 1,
+            "excluded": true
+          }
+        ]
+      },
+      "analysis": {
+        "items": [
+          {
+            "id": "r1",
+            "estimateDays": 1,
+            "links": [
+              {
+                "goalId": "g1",
+                "kind": "required",
+                "source": "desc"
+              }
+            ],
+            "dependencies": []
+          },
+          {
+            "id": "r2",
+            "estimateDays": 1,
+            "links": [
+              {
+                "goalId": "g1",
+                "kind": "supporting",
+                "source": "desc"
+              }
+            ],
+            "dependencies": []
+          }
+        ],
+        "goalGaps": []
+      },
+      "expected": {
+        "feasibility": "feasible",
+        "essentialIds": [
+          "r1"
+        ],
+        "goalRequired": [
+          [
+            "r1"
+          ]
+        ],
+        "wontIds": [
+          "r2"
+        ],
+        "candidateIds": [],
+        "dependencyPairs": [],
+        "typedDependencies": [],
+        "conflicts": [],
+        "needsConfirmation": false
+      }
+    },
+    {
+      "id": "exclude_direct",
+      "input": {
+        "people": 5,
+        "workdays": 10,
+        "success": "编辑能发布文章",
+        "requirements": [
+          {
+            "id": "r1",
+            "name": "发布文章",
+            "desc": "编辑发布文章",
+            "estimateDays": 1,
+            "excluded": true
+          },
+          {
+            "id": "r2",
+            "name": "主题换肤",
+            "desc": "修改主题颜色",
+            "estimateDays": 1
+          }
+        ]
+      },
+      "analysis": {
+        "items": [
+          {
+            "id": "r1",
+            "estimateDays": 1,
+            "links": [
+              {
+                "goalId": "g1",
+                "kind": "required",
+                "source": "desc"
+              }
+            ],
+            "dependencies": []
+          },
+          {
+            "id": "r2",
+            "estimateDays": 1,
+            "links": [],
+            "dependencies": []
+          }
+        ],
+        "goalGaps": []
+      },
+      "expected": {
+        "feasibility": "infeasible",
+        "essentialIds": [
+          "r1"
+        ],
+        "goalRequired": [
+          [
+            "r1"
+          ]
+        ],
+        "wontIds": [
+          "r1",
+          "r2"
+        ],
+        "candidateIds": [],
+        "dependencyPairs": [],
+        "typedDependencies": [],
+        "conflicts": [
+          [
+            "g1",
+            [
+              "r1"
+            ]
+          ]
+        ],
+        "needsConfirmation": false
+      }
+    },
+    {
+      "id": "exclude_transitive",
+      "input": {
+        "people": 5,
+        "workdays": 10,
+        "success": "编辑能发布文章",
+        "requirements": [
+          {
+            "id": "r1",
+            "name": "发布文章",
+            "desc": "只有内容校验完成后才能发布文章",
+            "estimateDays": 1
+          },
+          {
+            "id": "r2",
+            "name": "内容校验",
+            "desc": "必须在敏感词规则完成后执行内容校验",
+            "estimateDays": 1
+          },
+          {
+            "id": "r3",
+            "name": "敏感词规则",
+            "desc": "配置敏感词规则",
+            "estimateDays": 1,
+            "excluded": true
+          }
+        ]
+      },
+      "analysis": {
+        "items": [
+          {
+            "id": "r1",
+            "estimateDays": 1,
+            "links": [
+              {
+                "goalId": "g1",
+                "kind": "required",
+                "source": "desc"
+              }
+            ],
+            "dependencies": [
+              {
+                "toId": "r2",
+                "kind": "explicit",
+                "clauseIndex": 0
+              }
+            ]
+          },
+          {
+            "id": "r2",
+            "estimateDays": 1,
+            "links": [],
+            "dependencies": [
+              {
+                "toId": "r3",
+                "kind": "explicit",
+                "clauseIndex": 0
+              }
+            ]
+          },
+          {
+            "id": "r3",
+            "estimateDays": 1,
+            "links": [],
+            "dependencies": []
+          }
+        ],
+        "goalGaps": []
+      },
+      "expected": {
+        "feasibility": "infeasible",
+        "essentialIds": [
+          "r1",
+          "r2",
+          "r3"
+        ],
+        "goalRequired": [
+          [
+            "r1",
+            "r2",
+            "r3"
+          ]
+        ],
+        "wontIds": [
+          "r3"
+        ],
+        "candidateIds": [],
+        "dependencyPairs": [
+          [
+            "r1",
+            "r2"
+          ],
+          [
+            "r2",
+            "r3"
+          ]
+        ],
+        "typedDependencies": [
+          [
+            "r1",
+            "r2",
+            "explicit"
+          ],
+          [
+            "r2",
+            "r3",
+            "explicit"
+          ]
+        ],
+        "conflicts": [
+          [
+            "g1",
+            [
+              "r3"
+            ]
+          ]
+        ],
+        "needsConfirmation": false
+      }
+    },
+    {
+      "id": "exclude_independent",
+      "input": {
+        "people": 5,
+        "workdays": 10,
+        "success": "编辑能发布文章、管理员能导出成员名单",
+        "requirements": [
+          {
+            "id": "r1",
+            "name": "发布文章",
+            "desc": "只有内容校验完成后才能发布文章",
+            "estimateDays": 1
+          },
+          {
+            "id": "r2",
+            "name": "内容校验",
+            "desc": "执行内容校验",
+            "estimateDays": 1,
+            "excluded": true
+          },
+          {
+            "id": "r3",
+            "name": "导出成员名单",
+            "desc": "管理员导出成员名单",
+            "estimateDays": 1
+          }
+        ]
+      },
+      "analysis": {
+        "items": [
+          {
+            "id": "r1",
+            "estimateDays": 1,
+            "links": [
+              {
+                "goalId": "g1",
+                "kind": "required",
+                "source": "desc"
+              }
+            ],
+            "dependencies": [
+              {
+                "toId": "r2",
+                "kind": "explicit",
+                "clauseIndex": 0
+              }
+            ]
+          },
+          {
+            "id": "r2",
+            "estimateDays": 1,
+            "links": [],
+            "dependencies": []
+          },
+          {
+            "id": "r3",
+            "estimateDays": 1,
+            "links": [
+              {
+                "goalId": "g2",
+                "kind": "required",
+                "source": "desc"
+              }
+            ],
+            "dependencies": []
+          }
+        ],
+        "goalGaps": []
+      },
+      "expected": {
+        "feasibility": "infeasible",
+        "essentialIds": [
+          "r1",
+          "r2",
+          "r3"
+        ],
+        "goalRequired": [
+          [
+            "r1",
+            "r2"
+          ],
+          [
+            "r3"
+          ]
+        ],
+        "wontIds": [
+          "r2"
+        ],
+        "candidateIds": [
+          "r3"
+        ],
+        "dependencyPairs": [
+          [
+            "r1",
+            "r2"
+          ]
+        ],
+        "typedDependencies": [
+          [
+            "r1",
+            "r2",
+            "explicit"
+          ]
+        ],
+        "conflicts": [
+          [
+            "g1",
+            [
+              "r2"
+            ]
+          ]
+        ],
+        "needsConfirmation": false
+      }
+    },
+    {
+      "id": "exclude_uncertain",
+      "input": {
+        "people": 5,
+        "workdays": 10,
+        "success": "编辑能发布文章",
+        "requirements": [
+          {
+            "id": "r1",
+            "name": "发布文章",
+            "desc": "发布文章是否需要内容校验尚未确认",
+            "estimateDays": 1
+          },
+          {
+            "id": "r2",
+            "name": "内容校验",
+            "desc": "执行内容校验",
+            "estimateDays": 1,
+            "excluded": true
+          }
+        ]
+      },
+      "analysis": {
+        "items": [
+          {
+            "id": "r1",
+            "estimateDays": 1,
+            "links": [
+              {
+                "goalId": "g1",
+                "kind": "required",
+                "source": "desc"
+              }
+            ],
+            "dependencies": [
+              {
+                "toId": "r2",
+                "kind": "uncertain",
+                "clauseIndex": 0
+              }
+            ]
+          },
+          {
+            "id": "r2",
+            "estimateDays": 1,
+            "links": [],
+            "dependencies": []
+          }
+        ],
+        "goalGaps": []
+      },
+      "expected": {
+        "feasibility": "needs_confirmation",
+        "essentialIds": [
+          "r1"
+        ],
+        "goalRequired": [
+          [
+            "r1"
+          ]
+        ],
+        "wontIds": [
+          "r2"
+        ],
+        "candidateIds": [],
+        "dependencyPairs": [],
+        "typedDependencies": [
+          [
+            "r1",
+            "r2",
+            "uncertain"
+          ]
+        ],
+        "conflicts": [],
+        "needsConfirmation": true
+      }
+    },
+    {
+      "id": "exclude_association",
+      "input": {
+        "people": 5,
+        "workdays": 10,
+        "success": "编辑能发布文章",
+        "requirements": [
+          {
+            "id": "r1",
+            "name": "发布文章",
+            "desc": "编辑发布文章",
+            "estimateDays": 1
+          },
+          {
+            "id": "r2",
+            "name": "文章排行榜",
+            "desc": "按文章阅读量展示排行榜",
+            "estimateDays": 1,
+            "excluded": true
+          }
+        ]
+      },
+      "analysis": {
+        "items": [
+          {
+            "id": "r1",
+            "estimateDays": 1,
+            "links": [
+              {
+                "goalId": "g1",
+                "kind": "required",
+                "source": "desc"
+              }
+            ],
+            "dependencies": []
+          },
+          {
+            "id": "r2",
+            "estimateDays": 1,
+            "links": [],
+            "dependencies": []
+          }
+        ],
+        "goalGaps": []
+      },
+      "expected": {
+        "feasibility": "feasible",
+        "essentialIds": [
+          "r1"
+        ],
+        "goalRequired": [
+          [
+            "r1"
+          ]
+        ],
+        "wontIds": [
+          "r2"
+        ],
+        "candidateIds": [],
+        "dependencyPairs": [],
+        "typedDependencies": [],
+        "conflicts": [],
+        "needsConfirmation": false
+      }
+    },
+    {
+      "id": "exclude_shared",
+      "input": {
+        "people": 5,
+        "workdays": 10,
+        "success": "运营能上线活动、运营能发布公告",
+        "requirements": [
+          {
+            "id": "r1",
+            "name": "活动上线",
+            "desc": "只有权限校验完成后才能上线活动",
+            "estimateDays": 1
+          },
+          {
+            "id": "r2",
+            "name": "公告发布",
+            "desc": "只有权限校验完成后才能发布公告",
+            "estimateDays": 1
+          },
+          {
+            "id": "r3",
+            "name": "权限校验",
+            "desc": "执行权限校验",
+            "estimateDays": 1,
+            "excluded": true
+          }
+        ]
+      },
+      "analysis": {
+        "items": [
+          {
+            "id": "r1",
+            "estimateDays": 1,
+            "links": [
+              {
+                "goalId": "g1",
+                "kind": "required",
+                "source": "desc"
+              }
+            ],
+            "dependencies": [
+              {
+                "toId": "r3",
+                "kind": "explicit",
+                "clauseIndex": 0
+              }
+            ]
+          },
+          {
+            "id": "r2",
+            "estimateDays": 1,
+            "links": [
+              {
+                "goalId": "g2",
+                "kind": "required",
+                "source": "desc"
+              }
+            ],
+            "dependencies": [
+              {
+                "toId": "r3",
+                "kind": "explicit",
+                "clauseIndex": 0
+              }
+            ]
+          },
+          {
+            "id": "r3",
+            "estimateDays": 1,
+            "links": [],
+            "dependencies": []
+          }
+        ],
+        "goalGaps": []
+      },
+      "expected": {
+        "feasibility": "infeasible",
+        "essentialIds": [
+          "r1",
+          "r2",
+          "r3"
+        ],
+        "goalRequired": [
+          [
+            "r1",
+            "r3"
+          ],
+          [
+            "r2",
+            "r3"
+          ]
+        ],
+        "wontIds": [
+          "r3"
+        ],
+        "candidateIds": [],
+        "dependencyPairs": [
+          [
+            "r1",
+            "r3"
+          ],
+          [
+            "r2",
+            "r3"
+          ]
+        ],
+        "typedDependencies": [
+          [
+            "r1",
+            "r3",
+            "explicit"
+          ],
+          [
+            "r2",
+            "r3",
+            "explicit"
+          ]
+        ],
+        "conflicts": [
+          [
+            "g1",
+            [
+              "r3"
+            ]
+          ],
+          [
+            "g2",
+            [
+              "r3"
+            ]
+          ]
+        ],
+        "needsConfirmation": false
+      }
+    },
+    {
+      "id": "exclude_all",
+      "input": {
+        "people": 5,
+        "workdays": 10,
+        "success": "编辑能发布文章、管理员能导出成员名单",
+        "requirements": [
+          {
+            "id": "r1",
+            "name": "发布文章",
+            "desc": "编辑发布文章",
+            "estimateDays": 1,
+            "excluded": true
+          },
+          {
+            "id": "r2",
+            "name": "导出成员名单",
+            "desc": "管理员导出成员名单",
+            "estimateDays": 1,
+            "excluded": true
+          }
+        ]
+      },
+      "analysis": {
+        "items": [
+          {
+            "id": "r1",
+            "estimateDays": 1,
+            "links": [
+              {
+                "goalId": "g1",
+                "kind": "required",
+                "source": "desc"
+              }
+            ],
+            "dependencies": []
+          },
+          {
+            "id": "r2",
+            "estimateDays": 1,
+            "links": [
+              {
+                "goalId": "g2",
+                "kind": "required",
+                "source": "desc"
+              }
+            ],
+            "dependencies": []
+          }
+        ],
+        "goalGaps": []
+      },
+      "expected": {
+        "feasibility": "infeasible",
+        "essentialIds": [
+          "r1",
+          "r2"
+        ],
+        "goalRequired": [
+          [
+            "r1"
+          ],
+          [
+            "r2"
+          ]
+        ],
+        "wontIds": [
+          "r1",
+          "r2"
+        ],
+        "candidateIds": [],
+        "dependencyPairs": [],
+        "typedDependencies": [],
+        "conflicts": [
+          [
+            "g1",
+            [
+              "r1"
+            ]
+          ],
+          [
+            "g2",
+            [
+              "r2"
+            ]
+          ]
+        ],
+        "needsConfirmation": false
+      }
+    },
+    {
+      "id": "exclude_cleared",
+      "input": {
+        "people": 5,
+        "workdays": 10,
+        "success": "编辑能发布文章",
+        "requirements": [
+          {
+            "id": "r1",
+            "name": "发布文章",
+            "desc": "编辑发布文章",
+            "estimateDays": 1,
+            "excluded": false
+          },
+          {
+            "id": "r2",
+            "name": "主题换肤",
+            "desc": "修改主题颜色",
+            "estimateDays": 1
+          }
+        ]
+      },
+      "analysis": {
+        "items": [
+          {
+            "id": "r1",
+            "estimateDays": 1,
+            "links": [
+              {
+                "goalId": "g1",
+                "kind": "required",
+                "source": "desc"
+              }
+            ],
+            "dependencies": []
+          },
+          {
+            "id": "r2",
+            "estimateDays": 1,
+            "links": [],
+            "dependencies": []
+          }
+        ],
+        "goalGaps": []
+      },
+      "expected": {
+        "feasibility": "feasible",
+        "essentialIds": [
+          "r1"
+        ],
+        "goalRequired": [
+          [
+            "r1"
+          ]
+        ],
+        "wontIds": [
+          "r2"
+        ],
+        "candidateIds": [],
+        "dependencyPairs": [],
+        "typedDependencies": [],
+        "conflicts": [],
+        "needsConfirmation": false
+      }
+    },
+    {
+      "id": "exclude_tight",
+      "input": {
+        "people": 1,
+        "workdays": 1,
+        "success": "编辑能发布文章、管理员能导出成员名单",
+        "requirements": [
+          {
+            "id": "r1",
+            "name": "发布文章",
+            "desc": "只有内容校验完成后才能发布文章",
+            "estimateDays": 1
+          },
+          {
+            "id": "r2",
+            "name": "内容校验",
+            "desc": "执行内容校验",
+            "estimateDays": 1,
+            "excluded": true
+          },
+          {
+            "id": "r3",
+            "name": "导出成员名单",
+            "desc": "管理员导出成员名单",
+            "estimateDays": 1
+          }
+        ]
+      },
+      "analysis": {
+        "items": [
+          {
+            "id": "r1",
+            "estimateDays": 1,
+            "links": [
+              {
+                "goalId": "g1",
+                "kind": "required",
+                "source": "desc"
+              }
+            ],
+            "dependencies": [
+              {
+                "toId": "r2",
+                "kind": "explicit",
+                "clauseIndex": 0
+              }
+            ]
+          },
+          {
+            "id": "r2",
+            "estimateDays": 1,
+            "links": [],
+            "dependencies": []
+          },
+          {
+            "id": "r3",
+            "estimateDays": 1,
+            "links": [
+              {
+                "goalId": "g2",
+                "kind": "required",
+                "source": "desc"
+              }
+            ],
+            "dependencies": []
+          }
+        ],
+        "goalGaps": []
+      },
+      "expected": {
+        "feasibility": "infeasible",
+        "essentialIds": [
+          "r1",
+          "r2",
+          "r3"
+        ],
+        "goalRequired": [
+          [
+            "r1",
+            "r2"
+          ],
+          [
+            "r3"
+          ]
+        ],
+        "wontIds": [
+          "r2"
+        ],
+        "candidateIds": [],
+        "dependencyPairs": [
+          [
+            "r1",
+            "r2"
+          ]
+        ],
+        "typedDependencies": [
+          [
+            "r1",
+            "r2",
+            "explicit"
+          ]
+        ],
+        "conflicts": [
+          [
+            "g1",
+            [
+              "r2"
+            ]
+          ]
+        ],
+        "needsConfirmation": false
+      }
+    }
+  ]
+}

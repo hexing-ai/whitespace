@@ -1,26 +1,45 @@
 {
-  "name": "cutline",
-  "version": "0.1.0",
+  "name": "whitespace",
+  "version": "1.0.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
-    "lint": "eslint"
+    "dev": "node node_modules/next/dist/bin/next dev --webpack -H 127.0.0.1 -p 3100",
+    "build": "node node_modules/next/dist/bin/next build --webpack",
+    "start": "node node_modules/next/dist/bin/next start -H 127.0.0.1 -p 3100",
+    "lint": "node node_modules/eslint/bin/eslint.js .",
+    "typecheck": "node node_modules/next/dist/bin/next typegen && node node_modules/typescript/bin/tsc --noEmit",
+    "test": "node node_modules/vitest/vitest.mjs run",
+    "test:e2e": "node node_modules/@playwright/test/cli.js test",
+    "test:live": "node --env-file-if-exists=.env.local scripts/live-smoke.mjs",
+    "test:models": "node --env-file-if-exists=.env.local scripts/compare-models.mjs",
+    "test:dependencies": "node --env-file-if-exists=.env.local scripts/compare-models.mjs --dependencies",
+    "test:exclusions": "node --env-file-if-exists=.env.local scripts/compare-models.mjs --exclusions",
+    "test:scope": "node --env-file-if-exists=.env.local scripts/compare-models.mjs --scope"
   },
   "dependencies": {
+    "decimal.js": "^10.6.0",
+    "lucide-react": "^1.42.0",
+    "mp4box": "^0.5.4",
     "next": "16.3.4",
+    "openai": "^7.10.0",
     "react": "19.2.8",
     "react-dom": "19.2.8"
   },
   "devDependencies": {
+    "@playwright/test": "^1.63.0",
     "@tailwindcss/postcss": "^4",
-    "@types/node": "^20",
+    "@types/node": "^22.20.1",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "16.3.4",
     "tailwindcss": "^4",
-    "typescript": "^5"
+    "typescript": "^5",
+    "vitest": "^5.0.0"
+  },
+  "description": "留白 WhiteSpace：把需求变成这期能兑现的范围。",
+  "license": "MIT",
+  "engines": {
+    "node": ">=22.18.0 <23"
   }
 }

@@ -30,7 +30,7 @@ yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
 
-# env files (can opt-in for committing if needed)
+# local environment files; only the root empty template is public
 .env*
 
 # vercel
@@ -39,3 +39,40 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+!/.env.example
+/playwright-report/
+/test-results/
+
+# development references (not application dependencies)
+agent-blueprint/
+taste-skill-main/
+AI产品Vibe*手册*
+AI产品Vibe*技术栈*
+
+# local editor / assistant state
+.codex/
+.agents/
+.claude/
+.idea/
+.vscode/
+.mcp.json
+.npmrc
+
+# credentials, certificates and local data
+*.key
+*.p12
+*.pfx
+*.keystore
+id_rsa*
+id_ed25519*
+credentials.json
+secrets.json
+*.log
+*.db
+*.sqlite*
+*.bak
+*.swp
+*.swo
+/tmp/
+/temp/

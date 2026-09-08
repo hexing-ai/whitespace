@@ -1,0 +1,546 @@
+{
+  "version": "dependency-v1",
+  "models": [
+    "qwen3.6-plus"
+  ],
+  "repeatCases": [
+    "association_object",
+    "information_missing",
+    "negated_dependency"
+  ],
+  "cases": [
+    {
+      "id": "explicit_order",
+      "input": {
+        "people": 5,
+        "workdays": 10,
+        "success": "档案员能归档文件",
+        "requirements": [
+          {
+            "id": "p1",
+            "name": "文件校验",
+            "desc": "校验文件格式。",
+            "estimateDays": 3
+          },
+          {
+            "id": "p2",
+            "name": "文件归档",
+            "desc": "归档文件；必须在文件校验完成后执行。",
+            "estimateDays": 1
+          }
+        ]
+      },
+      "expected": {
+        "feasibility": "feasible",
+        "goalRequired": [
+          [
+            "p1",
+            "p2"
+          ]
+        ],
+        "essentialIds": [
+          "p1",
+          "p2"
+        ],
+        "wontIds": [],
+        "dependencyPairs": [
+          [
+            "p2",
+            "p1"
+          ]
+        ],
+        "candidateIds": null,
+        "typedDependencies": [
+          [
+            "p2",
+            "p1",
+            "explicit"
+          ]
+        ]
+      }
+    },
+    {
+      "id": "association_object",
+      "input": {
+        "people": 5,
+        "workdays": 10,
+        "success": "档案员能归档文件",
+        "requirements": [
+          {
+            "id": "p1",
+            "name": "文件校验",
+            "desc": "校验文件格式。",
+            "estimateDays": 3
+          },
+          {
+            "id": "p2",
+            "name": "文件归档",
+            "desc": "归档文件，与文件校验共享目录。",
+            "estimateDays": 1
+          }
+        ]
+      },
+      "expected": {
+        "feasibility": "feasible",
+        "goalRequired": [
+          [
+            "p2"
+          ]
+        ],
+        "essentialIds": [
+          "p2"
+        ],
+        "wontIds": [],
+        "dependencyPairs": [],
+        "candidateIds": null,
+        "typedDependencies": []
+      }
+    },
+    {
+      "id": "information_missing",
+      "input": {
+        "people": 5,
+        "workdays": 10,
+        "success": "档案员能归档文件",
+        "requirements": [
+          {
+            "id": "p1",
+            "name": "文件校验",
+            "desc": "校验文件格式。",
+            "estimateDays": 3
+          },
+          {
+            "id": "p2",
+            "name": "文件归档",
+            "desc": "归档文件；可能依赖文件校验，是否需要尚未确认。",
+            "estimateDays": 1
+          }
+        ]
+      },
+      "expected": {
+        "feasibility": "needs_confirmation",
+        "goalRequired": [
+          [
+            "p2"
+          ]
+        ],
+        "essentialIds": [
+          "p2"
+        ],
+        "wontIds": [],
+        "dependencyPairs": [],
+        "candidateIds": [],
+        "typedDependencies": [
+          [
+            "p2",
+            "p1",
+            "uncertain"
+          ]
+        ]
+      }
+    },
+    {
+      "id": "negated_dependency",
+      "input": {
+        "people": 5,
+        "workdays": 10,
+        "success": "档案员能归档文件",
+        "requirements": [
+          {
+            "id": "p1",
+            "name": "文件校验",
+            "desc": "校验文件格式。",
+            "estimateDays": 3
+          },
+          {
+            "id": "p2",
+            "name": "文件归档",
+            "desc": "归档文件；不依赖文件校验。",
+            "estimateDays": 1
+          }
+        ]
+      },
+      "expected": {
+        "feasibility": "feasible",
+        "goalRequired": [
+          [
+            "p2"
+          ]
+        ],
+        "essentialIds": [
+          "p2"
+        ],
+        "wontIds": [],
+        "dependencyPairs": [],
+        "candidateIds": null,
+        "typedDependencies": []
+      }
+    },
+    {
+      "id": "optional_order",
+      "input": {
+        "people": 5,
+        "workdays": 10,
+        "success": "档案员能归档文件",
+        "requirements": [
+          {
+            "id": "p1",
+            "name": "文件校验",
+            "desc": "校验文件格式。",
+            "estimateDays": 3
+          },
+          {
+            "id": "p2",
+            "name": "文件归档",
+            "desc": "归档文件；可以在文件校验之后执行，也可以独立执行。",
+            "estimateDays": 1
+          }
+        ]
+      },
+      "expected": {
+        "feasibility": "feasible",
+        "goalRequired": [
+          [
+            "p2"
+          ]
+        ],
+        "essentialIds": [
+          "p2"
+        ],
+        "wontIds": [],
+        "dependencyPairs": [],
+        "candidateIds": null,
+        "typedDependencies": []
+      }
+    },
+    {
+      "id": "event_only",
+      "input": {
+        "people": 5,
+        "workdays": 10,
+        "success": "档案员能归档文件",
+        "requirements": [
+          {
+            "id": "p1",
+            "name": "文件校验",
+            "desc": "校验文件格式。",
+            "estimateDays": 3
+          },
+          {
+            "id": "p2",
+            "name": "文件归档",
+            "desc": "归档文件；有文件校验结果时展示提示。",
+            "estimateDays": 1
+          }
+        ]
+      },
+      "expected": {
+        "feasibility": "feasible",
+        "goalRequired": [
+          [
+            "p2"
+          ]
+        ],
+        "essentialIds": [
+          "p2"
+        ],
+        "wontIds": [],
+        "dependencyPairs": [],
+        "candidateIds": null,
+        "typedDependencies": []
+      }
+    },
+    {
+      "id": "necessary_event",
+      "input": {
+        "people": 5,
+        "workdays": 10,
+        "success": "档案员能归档文件",
+        "requirements": [
+          {
+            "id": "p1",
+            "name": "文件校验",
+            "desc": "校验文件格式。",
+            "estimateDays": 3
+          },
+          {
+            "id": "p2",
+            "name": "文件归档",
+            "desc": "归档文件；只有文件校验完成时才能执行。",
+            "estimateDays": 1
+          }
+        ]
+      },
+      "expected": {
+        "feasibility": "feasible",
+        "goalRequired": [
+          [
+            "p1",
+            "p2"
+          ]
+        ],
+        "essentialIds": [
+          "p1",
+          "p2"
+        ],
+        "wontIds": [],
+        "dependencyPairs": [
+          [
+            "p2",
+            "p1"
+          ]
+        ],
+        "candidateIds": null,
+        "typedDependencies": [
+          [
+            "p2",
+            "p1",
+            "explicit"
+          ]
+        ]
+      }
+    },
+    {
+      "id": "missing_target",
+      "input": {
+        "people": 5,
+        "workdays": 10,
+        "success": "档案员能归档文件",
+        "requirements": [
+          {
+            "id": "p1",
+            "name": "文件校验",
+            "desc": "校验文件格式。",
+            "estimateDays": 3
+          },
+          {
+            "id": "p2",
+            "name": "文件归档",
+            "desc": "归档文件；必须等待外部授权服务批准，服务是否可用未知。",
+            "estimateDays": 1
+          }
+        ]
+      },
+      "expected": {
+        "feasibility": "needs_confirmation",
+        "goalRequired": [
+          [
+            "p2"
+          ]
+        ],
+        "essentialIds": [
+          "p2"
+        ],
+        "wontIds": [],
+        "dependencyPairs": [],
+        "candidateIds": [],
+        "typedDependencies": [
+          [
+            "p2",
+            null,
+            "uncertain"
+          ]
+        ]
+      }
+    },
+    {
+      "id": "ambiguous_target",
+      "input": {
+        "people": 5,
+        "workdays": 10,
+        "success": "档案员能归档文件",
+        "requirements": [
+          {
+            "id": "p1",
+            "name": "文件校验",
+            "desc": "校验格式。",
+            "estimateDays": 1
+          },
+          {
+            "id": "p3",
+            "name": "文件校验",
+            "desc": "校验签名。",
+            "estimateDays": 1
+          },
+          {
+            "id": "p2",
+            "name": "文件归档",
+            "desc": "归档文件；必须在文件校验完成后执行，但未指明哪一种校验。",
+            "estimateDays": 1
+          }
+        ]
+      },
+      "expected": {
+        "feasibility": "needs_confirmation",
+        "goalRequired": [
+          [
+            "p2"
+          ]
+        ],
+        "essentialIds": [
+          "p2"
+        ],
+        "wontIds": [],
+        "dependencyPairs": [],
+        "candidateIds": [],
+        "typedDependencies": [
+          [
+            "p2",
+            null,
+            "uncertain"
+          ]
+        ]
+      }
+    },
+    {
+      "id": "mixed_clauses",
+      "input": {
+        "people": 5,
+        "workdays": 10,
+        "success": "档案员能归档文件",
+        "requirements": [
+          {
+            "id": "p1",
+            "name": "文件校验",
+            "desc": "校验文件格式。",
+            "estimateDays": 3
+          },
+          {
+            "id": "p2",
+            "name": "文件归档",
+            "desc": "归档文件；不依赖外部授权；必须在文件校验完成后执行。",
+            "estimateDays": 1
+          }
+        ]
+      },
+      "expected": {
+        "feasibility": "feasible",
+        "goalRequired": [
+          [
+            "p1",
+            "p2"
+          ]
+        ],
+        "essentialIds": [
+          "p1",
+          "p2"
+        ],
+        "wontIds": [],
+        "dependencyPairs": [
+          [
+            "p2",
+            "p1"
+          ]
+        ],
+        "candidateIds": null,
+        "typedDependencies": [
+          [
+            "p2",
+            "p1",
+            "explicit"
+          ]
+        ]
+      }
+    },
+    {
+      "id": "conditional_gate",
+      "input": {
+        "people": 5,
+        "workdays": 10,
+        "success": "档案员能归档文件",
+        "requirements": [
+          {
+            "id": "p1",
+            "name": "文件校验",
+            "desc": "校验文件格式。",
+            "estimateDays": 3
+          },
+          {
+            "id": "p2",
+            "name": "文件归档",
+            "desc": "文件校验通过后文件才可归档。",
+            "estimateDays": 1
+          }
+        ]
+      },
+      "expected": {
+        "feasibility": "feasible",
+        "goalRequired": [
+          [
+            "p1",
+            "p2"
+          ]
+        ],
+        "essentialIds": [
+          "p1",
+          "p2"
+        ],
+        "wontIds": [],
+        "dependencyPairs": [
+          [
+            "p2",
+            "p1"
+          ]
+        ],
+        "candidateIds": null,
+        "typedDependencies": [
+          [
+            "p2",
+            "p1",
+            "explicit"
+          ]
+        ]
+      }
+    },
+    {
+      "id": "tight_prerequisite",
+      "input": {
+        "people": 1,
+        "workdays": 3,
+        "success": "档案员能归档文件",
+        "requirements": [
+          {
+            "id": "p1",
+            "name": "文件校验",
+            "desc": "校验文件格式。",
+            "estimateDays": 3
+          },
+          {
+            "id": "p2",
+            "name": "文件归档",
+            "desc": "归档文件；必须在文件校验完成后执行。",
+            "estimateDays": 1
+          }
+        ]
+      },
+      "expected": {
+        "feasibility": "infeasible",
+        "goalRequired": [
+          [
+            "p1",
+            "p2"
+          ]
+        ],
+        "essentialIds": [
+          "p1",
+          "p2"
+        ],
+        "wontIds": [],
+        "dependencyPairs": [
+          [
+            "p2",
+            "p1"
+          ]
+        ],
+        "candidateIds": [],
+        "typedDependencies": [
+          [
+            "p2",
+            "p1",
+            "explicit"
+          ]
+        ]
+      }
+    }
+  ]
+}

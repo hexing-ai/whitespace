@@ -1,0 +1,594 @@
+{
+  "version": "coverage-v1",
+  "frozenAt": "2026-09-07",
+  "repeatCases": [
+    "reversed_features",
+    "dependency_tight",
+    "renamed"
+  ],
+  "models": [
+    "qwen-plus",
+    "qwen3.6-plus",
+    "qwen3.6-flash"
+  ],
+  "thresholds": {
+    "hardInvariantRate": 1,
+    "scenarioPassRate": 1,
+    "firstValidRate": 0.9,
+    "repeatConsistency": 1,
+    "p95Milliseconds": 30000
+  },
+  "cases": [
+    {
+      "id": "all_required",
+      "label": "全部必要，允许无排除项",
+      "input": {
+        "people": 5,
+        "workdays": 10,
+        "success": "读者能检索书目；读者能查看库存",
+        "requirements": [
+          {
+            "id": "a1",
+            "name": "书目检索",
+            "desc": "读者输入书名检索书目。",
+            "estimateDays": 1
+          },
+          {
+            "id": "a2",
+            "name": "库存查询",
+            "desc": "读者查看图书当前库存。",
+            "estimateDays": 1
+          }
+        ]
+      },
+      "expected": {
+        "feasibility": "feasible",
+        "goalRequired": [
+          [
+            "a1"
+          ],
+          [
+            "a2"
+          ]
+        ],
+        "essentialIds": [
+          "a1",
+          "a2"
+        ],
+        "wontIds": [],
+        "dependencyPairs": [],
+        "candidateIds": null
+      }
+    },
+    {
+      "id": "reversed_features",
+      "label": "过去的扩展功能变为明确目标",
+      "input": {
+        "people": 5,
+        "workdays": 10,
+        "success": "访客能切换中英文；运营能查看报名排行榜",
+        "requirements": [
+          {
+            "id": "b1",
+            "name": "多语言",
+            "desc": "访客切换页面的中文和英文。",
+            "estimateDays": 2
+          },
+          {
+            "id": "b2",
+            "name": "报名排行榜",
+            "desc": "运营按报名量查看排行榜。",
+            "estimateDays": 2
+          },
+          {
+            "id": "b3",
+            "name": "节日发券",
+            "desc": "节日向用户发优惠券。",
+            "estimateDays": 1
+          }
+        ]
+      },
+      "expected": {
+        "feasibility": "feasible",
+        "goalRequired": [
+          [
+            "b1"
+          ],
+          [
+            "b2"
+          ]
+        ],
+        "essentialIds": [
+          "b1",
+          "b2"
+        ],
+        "wontIds": [
+          "b3"
+        ],
+        "dependencyPairs": [],
+        "candidateIds": null
+      }
+    },
+    {
+      "id": "missing_function",
+      "label": "产能足够但缺目标功能",
+      "input": {
+        "people": 5,
+        "workdays": 10,
+        "success": "客户能下载发票",
+        "requirements": [
+          {
+            "id": "c1",
+            "name": "地址管理",
+            "desc": "客户编辑收货地址。",
+            "estimateDays": 1
+          },
+          {
+            "id": "c2",
+            "name": "头像更换",
+            "desc": "客户上传头像。",
+            "estimateDays": 1
+          }
+        ]
+      },
+      "expected": {
+        "feasibility": "infeasible",
+        "goalRequired": [
+          []
+        ],
+        "essentialIds": [],
+        "wontIds": [
+          "c1",
+          "c2"
+        ],
+        "dependencyPairs": [],
+        "candidateIds": []
+      }
+    },
+    {
+      "id": "four_required",
+      "label": "必要项超过数量限制",
+      "input": {
+        "people": 5,
+        "workdays": 10,
+        "success": "员工能请假；员工能报销；员工能查工资；员工能预约工位",
+        "requirements": [
+          {
+            "id": "d1",
+            "name": "请假申请",
+            "desc": "员工提交请假申请。",
+            "estimateDays": 1
+          },
+          {
+            "id": "d2",
+            "name": "费用报销",
+            "desc": "员工提交报销单。",
+            "estimateDays": 1
+          },
+          {
+            "id": "d3",
+            "name": "工资查询",
+            "desc": "员工查询工资。",
+            "estimateDays": 1
+          },
+          {
+            "id": "d4",
+            "name": "工位预约",
+            "desc": "员工预约工位。",
+            "estimateDays": 1
+          }
+        ]
+      },
+      "expected": {
+        "feasibility": "infeasible",
+        "goalRequired": [
+          [
+            "d1"
+          ],
+          [
+            "d2"
+          ],
+          [
+            "d3"
+          ],
+          [
+            "d4"
+          ]
+        ],
+        "essentialIds": [
+          "d1",
+          "d2",
+          "d3",
+          "d4"
+        ],
+        "wontIds": [],
+        "dependencyPairs": [],
+        "candidateIds": null
+      }
+    },
+    {
+      "id": "dependency_tight",
+      "label": "便宜的下游不可独立承诺",
+      "input": {
+        "people": 1,
+        "workdays": 3,
+        "success": "完成样本登记；完成样本检测；生成检测报告",
+        "requirements": [
+          {
+            "id": "e1",
+            "name": "样本登记",
+            "desc": "完成样本登记。",
+            "estimateDays": 3
+          },
+          {
+            "id": "e2",
+            "name": "样本检测",
+            "desc": "样本检测必须在样本登记完成后执行。",
+            "estimateDays": 2
+          },
+          {
+            "id": "e3",
+            "name": "检测报告",
+            "desc": "检测报告必须在样本检测完成后生成。",
+            "estimateDays": 1
+          }
+        ]
+      },
+      "expected": {
+        "feasibility": "infeasible",
+        "goalRequired": [
+          [
+            "e1"
+          ],
+          [
+            "e1",
+            "e2"
+          ],
+          [
+            "e1",
+            "e2",
+            "e3"
+          ]
+        ],
+        "essentialIds": [
+          "e1",
+          "e2",
+          "e3"
+        ],
+        "wontIds": [],
+        "dependencyPairs": [
+          [
+            "e2",
+            "e1"
+          ],
+          [
+            "e3",
+            "e2"
+          ]
+        ],
+        "candidateIds": []
+      }
+    },
+    {
+      "id": "dependency_root",
+      "label": "仅前置工作能作为候选",
+      "input": {
+        "people": 1,
+        "workdays": 3,
+        "success": "完成样本登记；完成样本检测；生成检测报告",
+        "requirements": [
+          {
+            "id": "e1",
+            "name": "样本登记",
+            "desc": "完成样本登记。",
+            "estimateDays": 1
+          },
+          {
+            "id": "e2",
+            "name": "样本检测",
+            "desc": "样本检测必须在样本登记完成后执行。",
+            "estimateDays": 2
+          },
+          {
+            "id": "e3",
+            "name": "检测报告",
+            "desc": "检测报告必须在样本检测完成后生成。",
+            "estimateDays": 1
+          }
+        ]
+      },
+      "expected": {
+        "feasibility": "infeasible",
+        "goalRequired": [
+          [
+            "e1"
+          ],
+          [
+            "e1",
+            "e2"
+          ],
+          [
+            "e1",
+            "e2",
+            "e3"
+          ]
+        ],
+        "essentialIds": [
+          "e1",
+          "e2",
+          "e3"
+        ],
+        "wontIds": [],
+        "dependencyPairs": [
+          [
+            "e2",
+            "e1"
+          ],
+          [
+            "e3",
+            "e2"
+          ]
+        ],
+        "candidateIds": [
+          "e1"
+        ]
+      }
+    },
+    {
+      "id": "unknown_dependency",
+      "label": "外部前置条件未确认",
+      "input": {
+        "people": 5,
+        "workdays": 10,
+        "success": "员工能导出采购单",
+        "requirements": [
+          {
+            "id": "f1",
+            "name": "采购单导出",
+            "desc": "员工导出采购单，依赖尚未确定的外部授权服务。",
+            "estimateDays": 1
+          },
+          {
+            "id": "f2",
+            "name": "页面主题",
+            "desc": "切换页面配色。",
+            "estimateDays": 1
+          }
+        ]
+      },
+      "expected": {
+        "feasibility": "needs_confirmation",
+        "goalRequired": [
+          [
+            "f1"
+          ]
+        ],
+        "essentialIds": [
+          "f1"
+        ],
+        "wontIds": [
+          "f2"
+        ],
+        "dependencyPairs": [],
+        "candidateIds": []
+      }
+    },
+    {
+      "id": "missing_estimates",
+      "label": "空估值补估但保留已填值",
+      "input": {
+        "people": 10,
+        "workdays": 10,
+        "success": "编辑能预览文件；编辑能下载文件",
+        "requirements": [
+          {
+            "id": "g1",
+            "name": "文件预览",
+            "desc": "编辑预览文件。",
+            "estimateDays": null
+          },
+          {
+            "id": "g2",
+            "name": "文件下载",
+            "desc": "编辑下载文件。",
+            "estimateDays": 1
+          }
+        ]
+      },
+      "expected": {
+        "feasibility": "feasible",
+        "goalRequired": [
+          [
+            "g1"
+          ],
+          [
+            "g2"
+          ]
+        ],
+        "essentialIds": [
+          "g1",
+          "g2"
+        ],
+        "wontIds": [],
+        "dependencyPairs": [],
+        "candidateIds": null
+      }
+    },
+    {
+      "id": "renamed",
+      "label": "改名不改变判断",
+      "input": {
+        "people": 5,
+        "workdays": 10,
+        "success": "读者能检索书目；读者能查看库存",
+        "requirements": [
+          {
+            "id": "z91",
+            "name": "入口甲",
+            "desc": "读者输入书名检索书目。",
+            "estimateDays": 1
+          },
+          {
+            "id": "z27",
+            "name": "入口乙",
+            "desc": "读者查看图书当前库存。",
+            "estimateDays": 1
+          }
+        ]
+      },
+      "expected": {
+        "feasibility": "feasible",
+        "goalRequired": [
+          [
+            "z91"
+          ],
+          [
+            "z27"
+          ]
+        ],
+        "essentialIds": [
+          "z27",
+          "z91"
+        ],
+        "wontIds": [],
+        "dependencyPairs": [],
+        "candidateIds": null
+      }
+    },
+    {
+      "id": "shuffled",
+      "label": "打乱需求顺序不改变判断",
+      "input": {
+        "people": 5,
+        "workdays": 10,
+        "success": "读者能检索书目；读者能查看库存",
+        "requirements": [
+          {
+            "id": "a2",
+            "name": "库存查询",
+            "desc": "读者查看图书当前库存。",
+            "estimateDays": 1
+          },
+          {
+            "id": "a1",
+            "name": "书目检索",
+            "desc": "读者输入书名检索书目。",
+            "estimateDays": 1
+          }
+        ]
+      },
+      "expected": {
+        "feasibility": "feasible",
+        "goalRequired": [
+          [
+            "a1"
+          ],
+          [
+            "a2"
+          ]
+        ],
+        "essentialIds": [
+          "a1",
+          "a2"
+        ],
+        "wontIds": [],
+        "dependencyPairs": [],
+        "candidateIds": null
+      }
+    },
+    {
+      "id": "unrelated",
+      "label": "无关场景不能因富余产能保留",
+      "input": {
+        "people": 5,
+        "workdays": 10,
+        "success": "访客能查看开放时间",
+        "requirements": [
+          {
+            "id": "h1",
+            "name": "开放时间",
+            "desc": "展示场馆开放时间。",
+            "estimateDays": 1
+          },
+          {
+            "id": "h2",
+            "name": "优惠券",
+            "desc": "领取购物优惠券。",
+            "estimateDays": 1
+          },
+          {
+            "id": "h3",
+            "name": "游戏排行榜",
+            "desc": "展示小游戏得分榜。",
+            "estimateDays": 1
+          }
+        ]
+      },
+      "expected": {
+        "feasibility": "feasible",
+        "goalRequired": [
+          [
+            "h1"
+          ]
+        ],
+        "essentialIds": [
+          "h1"
+        ],
+        "wontIds": [
+          "h2",
+          "h3"
+        ],
+        "dependencyPairs": [],
+        "candidateIds": null
+      }
+    },
+    {
+      "id": "dependency_cycle",
+      "label": "依赖循环待确认",
+      "input": {
+        "people": 5,
+        "workdays": 10,
+        "success": "用户能生成结算单",
+        "requirements": [
+          {
+            "id": "j1",
+            "name": "结算单生成",
+            "desc": "用户生成结算单；必须在结算校验完成后运行。",
+            "estimateDays": 1
+          },
+          {
+            "id": "j2",
+            "name": "结算校验",
+            "desc": "校验结算数据；必须在结算单生成完成后运行。",
+            "estimateDays": 1
+          }
+        ]
+      },
+      "expected": {
+        "feasibility": "needs_confirmation",
+        "goalRequired": [
+          [
+            "j1",
+            "j2"
+          ]
+        ],
+        "essentialIds": [
+          "j1",
+          "j2"
+        ],
+        "wontIds": [],
+        "dependencyPairs": [
+          [
+            "j1",
+            "j2"
+          ],
+          [
+            "j2",
+            "j1"
+          ]
+        ],
+        "candidateIds": []
+      }
+    }
+  ]
+}

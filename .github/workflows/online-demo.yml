@@ -1,0 +1,37 @@
+name: Online Demo
+on:
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: 'closed checks the safety gate; live makes one paid generation'
+        type: choice
+        options: [closed, live]
+        default: closed
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    env:
+      NEXT_TELEMETRY_DISABLED: '1'
+      PLAYWRIGHT_CHANNEL: chromium
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci
+      - if: inputs.mode == 'closed'
+        run: node scripts/check-online-gate.mjs
+      - if: inputs.mode == 'live'
+        run: npx playwright install --with-deps chromium
+      - if: inputs.mode == 'live'
+        run: npm run test:live -- --url=https://whitespace-junz11055-8124.vercel.app --case=demo-5-10 --workspace-preview
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: online-demo-${{ inputs.mode }}
+          path: test-results/
+          retention-days: 7

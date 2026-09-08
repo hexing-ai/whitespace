@@ -1,0 +1,18 @@
+{
+  "repository": "https://github.com/PavelDoGreat/WebGL-Fluid-Simulation",
+  "commit": "a2d292931f19d9b3b9f564e23e6c32729d2121c3",
+  "license": "MIT",
+  "sourceSha256": "291d86de38ea23b8fb63d1879afeea77e9a4556900bbd67e13bc1d5ea007ce4e",
+  "licenseSha256": "1be448ae1212de2bee77b4cf851ab0acea0a7f7f32d21cd73095dd94dc173f66",
+  "parts": [
+    "fluid shaders",
+    "pressure projection and advection sequence"
+  ],
+  "changes": [
+    "typed instance lifecycle",
+    "scalar dye and fixed transparent color",
+    "bounded input and demand scheduling",
+    "exponential dissipation",
+    "no GUI, bloom, sunrays, random input or colors"
+  ]
+}

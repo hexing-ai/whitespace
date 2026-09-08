@@ -1,0 +1,160 @@
+{
+  "version": 1,
+  "cases": [
+    {
+      "id": "negative-separated",
+      "input": {
+        "people": 5,
+        "workdays": 10,
+        "requirements": [
+          {
+            "id": "r1",
+            "name": "资料提交",
+            "desc": "用户提交资料",
+            "estimateDays": 1
+          },
+          {
+            "id": "r2",
+            "name": "发放优惠券",
+            "desc": "向用户发放优惠券",
+            "estimateDays": 2
+          }
+        ],
+        "success": "用户能提交资料；本期不发优惠券"
+      },
+      "expected": {
+        "feasibility": "feasible",
+        "essentialIds": [
+          "r1"
+        ],
+        "goalRequired": [
+          [
+            "r1"
+          ]
+        ],
+        "wontIds": [
+          "r2"
+        ],
+        "dependencyPairs": [],
+        "candidateIds": []
+      }
+    },
+    {
+      "id": "negative-first",
+      "input": {
+        "people": 5,
+        "workdays": 10,
+        "requirements": [
+          {
+            "id": "r1",
+            "name": "资料提交",
+            "desc": "用户提交资料",
+            "estimateDays": 1
+          },
+          {
+            "id": "r2",
+            "name": "发放优惠券",
+            "desc": "向用户发放优惠券",
+            "estimateDays": 2
+          }
+        ],
+        "success": "本期不发优惠券；用户能提交资料"
+      },
+      "expected": {
+        "feasibility": "feasible",
+        "essentialIds": [
+          "r1"
+        ],
+        "goalRequired": [
+          [
+            "r1"
+          ]
+        ],
+        "wontIds": [
+          "r2"
+        ],
+        "dependencyPairs": [],
+        "candidateIds": []
+      }
+    },
+    {
+      "id": "negative-inline",
+      "input": {
+        "people": 5,
+        "workdays": 10,
+        "requirements": [
+          {
+            "id": "r1",
+            "name": "资料提交",
+            "desc": "用户提交资料",
+            "estimateDays": 1
+          },
+          {
+            "id": "r2",
+            "name": "发放优惠券",
+            "desc": "向用户发放优惠券",
+            "estimateDays": 2
+          }
+        ],
+        "success": "用户能提交资料但本期不发优惠券"
+      },
+      "expected": {
+        "feasibility": "feasible",
+        "essentialIds": [
+          "r1"
+        ],
+        "goalRequired": [
+          [
+            "r1"
+          ]
+        ],
+        "wontIds": [
+          "r2"
+        ],
+        "dependencyPairs": [],
+        "candidateIds": []
+      }
+    },
+    {
+      "id": "negative-real-gap",
+      "input": {
+        "people": 5,
+        "workdays": 10,
+        "requirements": [
+          {
+            "id": "r1",
+            "name": "资料提交",
+            "desc": "用户提交资料",
+            "estimateDays": 1
+          },
+          {
+            "id": "r2",
+            "name": "发放优惠券",
+            "desc": "向用户发放优惠券",
+            "estimateDays": 2
+          }
+        ],
+        "success": "用户能提交资料；本期不发优惠券；运营能审核资料"
+      },
+      "expected": {
+        "feasibility": "infeasible",
+        "essentialIds": [
+          "r1"
+        ],
+        "goalRequired": [
+          [
+            "r1"
+          ],
+          []
+        ],
+        "wontIds": [
+          "r2"
+        ],
+        "dependencyPairs": [],
+        "candidateIds": [
+          "r1"
+        ]
+      }
+    }
+  ]
+}
