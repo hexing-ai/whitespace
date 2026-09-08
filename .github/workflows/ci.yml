@@ -24,9 +24,11 @@ jobs:
       - run: npm test
       - run: npm run build
       - run: npx playwright install --with-deps chromium
+      - run: node scripts/cache-demo-video.mjs "${{ runner.temp }}/whitespace-hero.mp4"
       - run: npm run test:e2e
         env:
           PLAYWRIGHT_CHANNEL: chromium
+          WHITESPACE_VIDEO_FIXTURE: ${{ runner.temp }}/whitespace-hero.mp4
       - uses: actions/upload-artifact@v4
         if: failure()
         with:

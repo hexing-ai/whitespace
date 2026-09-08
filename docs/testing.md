@@ -14,7 +14,7 @@ PLAYWRIGHT_CHANNEL=chromium npm run test:e2e
 
 Linux 可能需要 `npx playwright install --with-deps chromium`；本机装有 Google Chrome 时，直接 `npm run test:e2e` 默认使用 Chrome。PowerShell 可先执行 `$env:PLAYWRIGHT_CHANNEL="chromium"`。
 
-浏览器测试会启动自己的开发服务器，先停止占用 3100 的服务。测试使用固定 API 响应检查状态和交互，不会产生百炼费用。首页动态用例由测试注入媒体或运行时条件，不要求 CI 下载原始 CDN 视频。
+浏览器测试会启动自己的开发服务器，先停止占用 3100 的服务。测试使用固定 API 响应检查状态和交互，不会产生百炼费用。首页动态用例需要原始视频字节：本机默认访问 CDN，也可用 WHITESPACE_VIDEO_FIXTURE 指向经过哈希核对的本地视频。CI 先下载并校验视频，再作为固定输入交给浏览器，页面回归期间不依赖 CDN 时序。
 
 CI 在推送和 Pull Request 时运行上述工程、规则和浏览器检查，不配置百炼 Key。
 
@@ -48,3 +48,15 @@ npm run test:scope
 公开 Demo 保护另有 `tests/demo-guard.test.ts` 与 API 边界测试，检查关闭开关、并发、频率、输入规模以及被拒请求不调用模型。
 
 具体版本实际通过的项目见 Release 说明。未执行的真实用例、Safari/实体设备及实际账单不会标记为已验证。
+
+## 在线版本
+
+GitHub Actions 的 **Online Demo** 工作流支持手动运行：`closed` 检查生成关闭开关与平台限流，不产生模型调用；`live` 使用真实 Chromium 完成一次内置示例生成，会消耗部署方的模型额度。
+
+也可在本机 Google Chrome 中执行：
+
+```bash
+npm run test:live -- --url=https://whitespace-junz11055-8124.vercel.app --case=demo-5-10 --workspace-preview
+```
+
+远程模式不启动本地服务、不要求本地 Key，也不读取远程服务端日志；结果中的模型字段标记为服务端配置，不能用本地环境变量推断远程模型。

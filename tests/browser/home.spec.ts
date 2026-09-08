@@ -195,6 +195,10 @@ test("hardware failure retries once with the real software decoder", async ({ pa
   page.on("worker", worker => { void worker.evaluate(() => {
     const NativeDecoder = self.VideoDecoder;
     self.VideoDecoder = class extends NativeDecoder {
+      static async isConfigSupported(config: VideoDecoderConfig) {
+        if (config.hardwareAcceleration === "prefer-hardware") return { supported: true, config };
+        return NativeDecoder.isConfigSupported(config);
+      }
       configure(config: VideoDecoderConfig) {
         if (config.hardwareAcceleration === "prefer-hardware") throw new Error("Hardware unavailable");
         super.configure(config);

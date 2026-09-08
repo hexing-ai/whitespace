@@ -1,0 +1,11 @@
+import { writeFile } from 'node:fs/promises';
+import { createHash } from 'node:crypto';
+import { homeConfig } from '../src/features/home/config.ts';
+import { originalVideoSha256 } from './original-video-fixture.mjs';
+const path=process.argv[2];
+if(!path)throw new Error('Provide a temporary output path');
+const response=await fetch(homeConfig.video,{signal:AbortSignal.timeout(60000)});
+if(!response.ok)throw new Error(`Video download returned ${response.status}`);
+const bytes=Buffer.from(await response.arrayBuffer());
+if(createHash('sha256').update(bytes).digest('hex')!==originalVideoSha256)throw new Error('Video does not match the frozen fixture');
+await writeFile(path,bytes);console.log('Original video fixture downloaded and SHA-256 verified.');
